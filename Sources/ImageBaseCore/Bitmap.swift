@@ -207,7 +207,7 @@ extension Bitmap where P == RGBA<UInt8> {
     
 }
 
-extension Int {
+public extension Int {
     
     func clamp(min: Int, max: Int) -> Int {
         if self < min { return min }
