@@ -1,0 +1,4 @@
+
+module libheif {
+    umbrella header "libheif.h"
+}

@@ -1,0 +1,4 @@
+
+module mem {
+    umbrella header "shm.h"
+}

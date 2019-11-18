@@ -1,0 +1,4 @@
+
+module libpng {
+    umbrella header "libpng.h"
+}

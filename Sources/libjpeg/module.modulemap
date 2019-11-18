@@ -1,0 +1,4 @@
+
+module libjpeg {
+    umbrella header "libjpeg.h"
+}
