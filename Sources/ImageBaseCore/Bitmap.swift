@@ -119,7 +119,24 @@ public class Bitmap<P: Pixel> {
         let half = Size(size.width/2, size.height/2)
         guard half * 2 == size else { throw MiscError(/*"size not even"*/) }
         
-        return try resized(to: half)
+        let target = Bitmap<P>(half)
+        
+        for y in 0..<half.height {
+            for x in 0..<half.width {
+                let x2 = x*2
+                let y2 = y*2
+                
+                
+                let p = P((sample(x2+0, y2+0).w +
+                        sample(x2+1, y2+0).w +
+                        sample(x2+0, y2+1).w +
+                        sample(x2+1, y2+1).w) >> 2)
+                
+                target.set(x,y,v: p)
+            }
+        }
+        
+        return target
     }
     
     func resized(to new: Size) throws -> Bitmap<P> {
@@ -153,6 +170,26 @@ public class Bitmap<P: Pixel> {
         }
     
         return bitmap
+    }
+    
+    public static func from<P>(_ source: Bitmap<P>, _ orientation: ImageOrientation = .up) -> Bitmap<P> {
+        if orientation == .up { return source }
+        
+        let size = source.size.after(orientation)
+        let target = Bitmap<P>(size)
+        
+        let transform = orientation.transform(for: source.size)
+//        let stride = target.stride
+        
+        for x in 0..<size.width {
+            for y in 0..<size.height {
+                let (sx, sy) = transform * (x, y)
+                let p = source.sample(sx, sy)
+                target.set(x, y, v: p)
+            }
+        }
+        
+        return target
     }
     
 }
@@ -194,4 +231,13 @@ extension Int {
         return Int(result)
     }
     
+}
+
+func * (l: IntAffineTransform, r: (Int,Int)) -> (Int,Int) {
+    let t = l
+    let p = r
+    let x = p.0 * Int(t.a) + p.1 * Int(t.b);
+    let y = p.0 * Int(t.c) + p.1 * Int(t.d);
+    
+    return (x + Int(t.x), y + Int(t.y))
 }

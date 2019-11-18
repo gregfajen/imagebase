@@ -56,7 +56,7 @@ public protocol Pixel {
     var w: W { get }
     init(_ w: W)
     
-//    static func + (l: Self, r: Self) -> Self
+    static func + (l: Self, r: Self) -> Self // watch out for integer overflow!
     static func << (l: Self, r: Int) -> Self
     static func >> (l: Self, r: Int) -> Self
     
@@ -77,6 +77,7 @@ public struct Mono<U: Ub>: Pixel {
     public init(_ w: W) {
         v = U(w.v)
     }
+    
     public var w: W {
         return .init(UInt64(v))
     }

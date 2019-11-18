@@ -100,6 +100,9 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
         print("\(width)x\(height)")
         print("scanline: \(info.output_scanline)")
         
+        
+        let orientation = getOrientation(from: data) ?? .up
+        
         let image: Image
         if channels == 3 {
             let bitmap = Bitmap<RGB<UInt8>>(.init(width, height))
@@ -108,7 +111,9 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
                 jpeg_read_scanlines(&info, &row, 1)
             }
             
-            image = Image(bitmap)
+            let reoriented = Bitmap<RGB<UInt8>>.from(bitmap, orientation)
+            
+            image = Image(reoriented)
         } else if channels == 1 {
             let bitmap = Bitmap<Mono<UInt8>>(.init(width, height))
             for row in bitmap.rowsBuffer {
@@ -116,13 +121,16 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
                 jpeg_read_scanlines(&info, &row, 1)
             }
             
-            image = Image(bitmap)
+            let reoriented = Bitmap<Mono<UInt8>>.from(bitmap, orientation)
+            
+            image = Image(reoriented)
         } else {
             throw MiscError()
         }
         
         jpeg_finish_decompress(&info)
         jpeg_destroy_decompress(&info)
+        
         
         return image
     }

@@ -12,7 +12,7 @@ struct DataStreamError: Error {
     
 }
 
-class DataStream {
+public class DataStream {
     
     let data: Data
     var cursor = 0
@@ -71,7 +71,7 @@ func int(_ bytes: [UInt8]) -> Int {
     
 }
 
-func parseExif(_ bytes: [UInt8]) throws -> ImageOrientation? {
+public func parseExif(_ bytes: [UInt8]) throws -> ImageOrientation? {
     var bytes = bytes
     while let b = bytes.first, b == 0 {
         bytes.removeFirst()
@@ -248,7 +248,7 @@ public func getOrientation(from data: Data) -> ImageOrientation? {
     
 //    assert(stream.remaining == 2)
     
-    let footer = try stream.get(2)
+//    let footer = try stream.get(2)
 //    print("footer: \(hex(footer))")
         return nil
     } catch _ {
