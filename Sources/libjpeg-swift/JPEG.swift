@@ -30,7 +30,7 @@ extension PixelType {
     
 }
 
-public struct JPEG: FileBasedDecoder, ImageEncoder {
+public struct JPEG: DataBasedDecoder, ImageEncoder {
     
     static func encode<P>(_ bitmap: Bitmap<P>) throws -> Data {
         var info: jpeg_compress_struct = .init()
@@ -77,7 +77,7 @@ public struct JPEG: FileBasedDecoder, ImageEncoder {
         }
     }
     
-    public static func decode(fp: UnsafeMutablePointer<FILE>) throws -> Image {
+    public static func decode(data: Data) throws -> Image {
         
         var info: jpeg_decompress_struct = .init()
         var err: jpeg_error_mgr = .init()
@@ -87,7 +87,7 @@ public struct JPEG: FileBasedDecoder, ImageEncoder {
                               JPEG_LIB_VERSION,
                               MemoryLayout<jpeg_decompress_struct>.size)
         
-        jpeg_stdio_src(&info, fp);
+        jpeg_mem_src(&info, data.address, data.count)
         jpeg_read_header(&info, TRUE);   // read jpeg file header
         
         jpeg_start_decompress(&info);    // decompress the file

@@ -18,7 +18,7 @@ public enum MimeType: String {
 
 extension Data {
     
-    var address: UnsafeRawPointer {
+    public var address: UnsafeRawPointer {
         return (self as NSData).bytes
     }
     
