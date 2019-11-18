@@ -114,19 +114,17 @@ extension ImageOrientation {
         let w = Int16(size.width)
         let h = Int16(size.height)
         switch self {
-        case .up:            return IntAffineTransform( 1, 0, 0,  1,   0, 0)
-        case .upMirrored:    return IntAffineTransform(-1, 0, 0,  1, w-1, 0)
-            
-        case .left:          return IntAffineTransform(0, -1, 1,  0, w-1, 0)
-        case .leftMirrored:  return IntAffineTransform(0,  1, 1,  0,   0, 0)
-            
-        case .down:          return IntAffineTransform(-1, 0, 0, -1, w-1, h-1)
-        case .downMirrored:  return IntAffineTransform(1,  0, 0, -1,   0, h-1)
-            
-        case .right:         return IntAffineTransform(0,  1, -1, 0,   0, h-1)
-        case .rightMirrored: return IntAffineTransform(0, -1, -1, 0, w-1, h-1)
-            
-//        default: return .identity
+            case .up:            return IntAffineTransform( 1, 0, 0,  1,   0, 0)
+            case .upMirrored:    return IntAffineTransform(-1, 0, 0,  1, w-1, 0)
+                
+            case .left:          return IntAffineTransform(0, -1, 1,  0, w-1, 0)
+            case .leftMirrored:  return IntAffineTransform(0,  1, 1,  0,   0, 0)
+                
+            case .down:          return IntAffineTransform(-1, 0, 0, -1, w-1, h-1)
+            case .downMirrored:  return IntAffineTransform(1,  0, 0, -1,   0, h-1)
+                
+            case .right:         return IntAffineTransform(0, -1, -1, 0, w-1, h-1)
+            case .rightMirrored: return IntAffineTransform(0,  1, -1, 0,   0, h-1)
         }
     }
 }

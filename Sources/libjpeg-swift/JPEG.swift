@@ -102,6 +102,7 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
         
         
         let orientation = getOrientation(from: data) ?? .up
+        print("orientation: \(orientation) \(orientation.rawValue)")
         
         let image: Image
         if channels == 3 {
