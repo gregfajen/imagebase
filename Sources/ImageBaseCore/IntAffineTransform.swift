@@ -33,7 +33,7 @@ public enum ImageOrientation : UInt8, Hashable {
 }
 #endif
 
-struct IntAffineTransform: CustomDebugStringConvertible {
+struct IntAffineTransform: CustomDebugStringConvertible, Equatable {
     
     let a,b,c,d,x,y: Int16
     
@@ -106,8 +106,34 @@ extension ImageOrientation {
     }
     
     
+//    func transform(for size: Size) -> IntAffineTransform {
+//        let a = transformA(for: size)
+//        let b = transformB(for: size)
+//        assert(a == b)
+//        return a
+////        return inverseTransform(for: size).inverse
+//    }
+//
+//    func transformA(for size: Size) -> IntAffineTransform {
+//        return inverseTransform(for: size).inverse
+//    }
+    
     func transform(for size: Size) -> IntAffineTransform {
-        return inverseTransform(for: size).inverse
+        let w = Int16(size.width)
+        let h = Int16(size.height)
+        switch self {
+            case .up:            return IntAffineTransform( 1, 0, 0,  1,   0, 0)
+            case .upMirrored:    return IntAffineTransform(-1, 0, 0,  1, w-1, 0)
+
+            case .down:          return IntAffineTransform(-1, 0, 0, -1, w-1, h-1)
+            case .downMirrored:  return IntAffineTransform(1,  0, 0, -1,   0, h-1)
+
+            case .right:         return IntAffineTransform(0,  1, 1,  0,   0, 0) // 5
+            case .rightMirrored: return IntAffineTransform(0, -1, 1,  0,  0, h-1) // 6
+
+            case .left:          return IntAffineTransform(0,  -1, -1, 0, w-1, h-1)
+            case .leftMirrored:  return IntAffineTransform(0,  1, -1, 0,   w-1, 0)
+        }
     }
     
     func inverseTransform(for size: Size) -> IntAffineTransform {
@@ -116,17 +142,27 @@ extension ImageOrientation {
         switch self {
             case .up:            return IntAffineTransform( 1, 0, 0,  1,   0, 0)
             case .upMirrored:    return IntAffineTransform(-1, 0, 0,  1, w-1, 0)
-                
-            case .left:          return IntAffineTransform(0, -1, 1,  0, w-1, 0)
-            case .leftMirrored:  return IntAffineTransform(0,  1, 1,  0,   0, 0)
-                
-            case .right:         return IntAffineTransform(0, -1, -1, 0, w-1, h-1)
-            case .rightMirrored: return IntAffineTransform(0,  1, -1, 0,   0, h-1)
             
             case .down:          return IntAffineTransform(-1, 0, 0, -1, w-1, h-1)
             case .downMirrored:  return IntAffineTransform(1,  0, 0, -1,   0, h-1)
+                
+            case .right:         return IntAffineTransform(0,  1, 1,  0,   0, 0) // 5
+            case .rightMirrored: return IntAffineTransform(0, 1, -1,  0,  h-1, 0) // 6
+                
+            case .left:          return IntAffineTransform(0,  -1, -1, 0, h-1, w-1)
+            case .leftMirrored:  return IntAffineTransform(0,  -1, 1, 0,   0, w-1)
         }
     }
+}
+
+extension IntAffineTransform {
+    
+//    func flippedHorizontally(for size: Size) -> IntAffineTransform {
+//        
+////        return self *
+//        
+//    }
+    
 }
 
 #if os(iOS)

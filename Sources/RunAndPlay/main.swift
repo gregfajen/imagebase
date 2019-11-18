@@ -15,37 +15,17 @@ import libjpeg_swift
 
 print("HI!")
 
-var filename = "/Users/greg/Desktop/test.jpg"
+//for i in [6,7,8] {
+for i in 1...8 {
+    
+    var filename = "/Users/greg/Desktop/or_\(i).JPG"
+    let image = try! JPEG.decode(path: filename)
+    
+    filename = "/Users/greg/Desktop/or_\(i)_out.jpg"
+    let data = try! JPEG.encode(image: image)
+    try! data.write(to: URL(fileURLWithPath: filename))
+    
+}
 
-let image = try! JPEG.decode(path: filename)
-
-print("\(image)")
-print("    size: \(image.size.width)x\(image.size.height)")
-print(" ")
-
-//let half = try image.halved()
-
-
-
-let data = try! HEIF.encode(image: image)
-filename = "/Users/greg/Desktop/test.heif"
-//let data = try! PNG.encode(image: image)
-//filename = "/Users/greg/Desktop/wrong.png"
-try! data.write(to: URL(fileURLWithPath: filename))
-print("\(data)")
-print("    count: \(data.count)")
-print(" ")
-
-//yield 
-
-/// TODO:
-/// libjpeg
-/// libheif
-/// resizing
-///
-/// more png options
-/// check for transparancy
-/// check for black and white
-///
 
 

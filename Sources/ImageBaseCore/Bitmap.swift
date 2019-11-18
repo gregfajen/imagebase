@@ -13,7 +13,6 @@ extension Pixel {
     
 }
 
-
 public class Bitmap<P: Pixel> {
     
     typealias U = P.U
@@ -179,7 +178,6 @@ public class Bitmap<P: Pixel> {
         let target = Bitmap<P>(size)
         
         let transform = orientation.transform(for: source.size)
-//        let stride = target.stride
         
         for x in 0..<size.width {
             for y in 0..<size.height {
@@ -236,8 +234,8 @@ public extension Int {
 func * (l: IntAffineTransform, r: (Int,Int)) -> (Int,Int) {
     let t = l
     let p = r
-    let x = p.0 * Int(t.a) + p.1 * Int(t.b);
-    let y = p.0 * Int(t.c) + p.1 * Int(t.d);
+    let x = p.0 * Int(t.a) + p.1 * Int(t.c);
+    let y = p.0 * Int(t.b) + p.1 * Int(t.d);
     
     return (x + Int(t.x), y + Int(t.y))
 }
