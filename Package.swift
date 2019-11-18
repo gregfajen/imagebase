@@ -7,7 +7,7 @@ let package = Package(
     name: "ImageBase",
     products: [
         .library(name: "ImageBase", targets: ["ImageBase"]),
-        .executable(name: "Run", targets: ["Run"])
+//        .executable(name: "RunAndPlay", targets: ["RunAndPlay"])
     ],
     dependencies: [],
     targets: [
@@ -29,7 +29,7 @@ let package = Package(
         
         // umbrella
         .target(name: "ImageBase", dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift"]),
-        .target(name: "Run", dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift"])
+//        .target(name: "RunAndPlay", dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift"])
         
     ]
 )
