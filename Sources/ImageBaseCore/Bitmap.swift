@@ -119,10 +119,10 @@ public class Bitmap<P: Pixel> {
         let half = Size(size.width/2, size.height/2)
         guard half * 2 == size else { throw MiscError(/*"size not even"*/) }
         
-        return resized(to: half)
+        return try resized(to: half)
     }
     
-    func resized(to new: Size) -> Bitmap<P> {
+    func resized(to new: Size) throws -> Bitmap<P> {
         let bitmap = Bitmap<P>(new)
         
         let ws = Float(size.width)  / Float(new.width)

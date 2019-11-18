@@ -40,4 +40,18 @@ public enum ImageBacking<U: Ub> {
         }
     }
     
+    
+    func resized(to new: Size) throws -> ImageBacking<U> {
+        switch self {
+            case .G(let b): return .G(try b.resized(to: new))
+            case .GA(let b): return .GA(try b.resized(to: new))
+            case .RGB(let b): return .RGB(try b.resized(to: new))
+            case .RGBA(let b): return .RGBA(try b.resized(to: new))
+            case .YCbCr(let y, let cb, let cr):
+                return .YCbCr(try y.resized(to: new), try cb.resized(to: new), try cr.resized(to: new))
+            case .YCbCrA(let y, let cb, let cr, let a):
+                return .YCbCrA(try y.resized(to: new), try cb.resized(to: new), try cr.resized(to: new), try a.resized(to: new))
+        }
+    }
+    
 }

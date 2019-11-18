@@ -30,4 +30,8 @@ public class Image {
         return Image(try backing.halved(), profile)
     }
     
+    public func resized(to new: Size) throws -> Image {
+        return Image(try backing.resized(to: new), profile)
+    }
+    
 }
