@@ -27,7 +27,7 @@ func heif_write(image: HEIFImage) throws -> Data {
     
     let context = HEIFContext()
     let encoder = try HEIFEncoder()
-    encoder.lossyQuality = 50
+    encoder.lossyQuality = 30
     
     _ = try image.encode(context: context, encoder: encoder)
     
