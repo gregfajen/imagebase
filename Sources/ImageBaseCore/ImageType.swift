@@ -16,13 +16,13 @@ public enum MimeType: String {
     case mp4  = "video/mp4"
 }
 
-extension Data {
+public extension Data {
     
-    public var address: UnsafeRawPointer {
+    var address: UnsafeRawPointer {
         return (self as NSData).bytes
     }
     
-    public var mimeType: MimeType? {
+    var mimeType: MimeType? {
         guard count > 0 else {
             print("TRIED TO GET MIMETYPE FOR EMPTY DATA?")
             return nil

@@ -87,7 +87,7 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
                               JPEG_LIB_VERSION,
                               MemoryLayout<jpeg_decompress_struct>.size)
         
-        jpeg_mem_src(&info, data.address, data.count)
+        jpeg_mem_src(&info, data.address.assumingMemoryBound(to: UInt8.self), UInt(data.count))
         jpeg_read_header(&info, TRUE);   // read jpeg file header
         
         jpeg_start_decompress(&info);    // decompress the file
