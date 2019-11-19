@@ -18,5 +18,5 @@ void wrap_jump( void (*fn)(void *), void (*err)(void *), void* data, jmp_buf *en
 }
 
 void wrap_long_jump(jmp_buf *env) {
-    longjmp(env, 1);
+    longjmp(*env, 1);
 }
