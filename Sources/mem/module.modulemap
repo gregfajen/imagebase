@@ -1,4 +1,4 @@
 
 module mem {
-    umbrella header "shm.h"
+    umbrella header "mem.h"
 }

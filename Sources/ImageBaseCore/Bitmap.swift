@@ -186,6 +186,23 @@ public class Bitmap<P: Pixel> {
         return result
     }
     
+    
+    public func unzip<Q: Pixel, R: Pixel>(_ f: (P)->(Q,R)) -> (Bitmap<Q>, Bitmap<R>) {
+        let qr = Bitmap<Q>(size)
+        let rr = Bitmap<R>(size)
+        
+        for y in 0..<size.height {
+            for x in 0..<size.width {
+                let p = sample(x, y)
+                let (q, r) = f(p)
+                qr.set(x, y, v: q)
+                rr.set(x, y, v: r)
+            }
+        }
+        
+        return (qr, rr)
+    }
+    
     public static func from<P>(_ source: Bitmap<P>, _ orientation: ImageOrientation = .up) -> Bitmap<P> {
         if orientation == .up { return source }
         

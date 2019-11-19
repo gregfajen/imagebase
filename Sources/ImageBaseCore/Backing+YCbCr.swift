@@ -68,6 +68,7 @@ public extension ImageBacking {
         let Y = Bitmap<Mono<UInt8>>(size)
         let Cb = Bitmap<Mono<UInt8>>(size)
         let Cr = Bitmap<Mono<UInt8>>(size)
+        let A = Bitmap<Mono<UInt8>>(size)
         
         for y in 0..<size.height {
             for x in 0..<size.width {
@@ -78,12 +79,14 @@ public extension ImageBacking {
                 Y.set(x, y, v: .init(_Y))
                 Cb.set(x, y, v: .init(_Cb))
                 Cr.set(x, y, v: .init(_Cr))
+                A.set(x, y, v: .init(rgba.a))
             }
         }
         
-        return .YCbCr(Y as! Bitmap<Mono<U>>,
+        return .YCbCrA(Y as! Bitmap<Mono<U>>,
                       Cb as! Bitmap<Mono<U>>,
-                      Cr as! Bitmap<Mono<U>>)
+                      Cr as! Bitmap<Mono<U>>,
+                      A as! Bitmap<Mono<U>>)
     }
     
     func as420() throws -> ImageBacking<U> {

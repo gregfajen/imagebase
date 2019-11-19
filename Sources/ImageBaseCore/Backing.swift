@@ -16,6 +16,16 @@ public enum ImageBacking<U: Ub> {
     case YCbCr(Bitmap<Mono<U>>, Bitmap<Mono<U>>, Bitmap<Mono<U>>)
     case YCbCrA(Bitmap<Mono<U>>, Bitmap<Mono<U>>, Bitmap<Mono<U>>, Bitmap<Mono<U>>)
     
+    public var pixelType: PixelType? {
+        switch self {
+            case .G: return .y
+            case .GA: return .ya
+            case .RGB: return .rgb
+            case .RGBA: return .rgba
+            default: return nil
+        }
+    }
+    
     var size: Size {
         switch self {
             case .G(let i): return i.size

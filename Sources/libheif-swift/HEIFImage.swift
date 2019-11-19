@@ -13,6 +13,14 @@ public class HEIFImage {
     
     let image: heif_image_ptr
     
+    convenience init(GA: Bitmap<MonoAlpha<UInt8>>, _ profile: ColorProfile?) throws {
+        let (Y, A) = GA.unzip { (ga: MonoAlpha<UInt8>) -> (Mono<UInt8>, Mono<UInt8>) in
+            return (.init(ga.v), .init(ga.a))
+        }
+        
+        try self.init(Y: Y, A: A, profile)
+    }
+    
     public init(Y: Bitmap<Mono<UInt8>>,
                 A:  Bitmap<Mono<UInt8>>?,
                 _ profile: ColorProfile?) throws {
@@ -98,6 +106,7 @@ public class HEIFImage {
     }
     
     func setProfile(_ profile: ColorProfile) throws {
+        guard profile.data.count > 0 else { return }
         
         let string = String(cString: profile.pointer.assumingMemoryBound(to: UInt8.self))
         print("string: \(string)")

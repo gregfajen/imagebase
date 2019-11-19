@@ -17,7 +17,8 @@ public struct HEIF: ImageEncoder {
         switch backing {
             case .RGB, .RGBA: throw MiscError()
             
-            case .GA: throw MiscError()
+            case .GA(let GA):
+                return try HEIFImage(GA: GA, profile)
             
             case .G(let Y):
                 return try HEIFImage(Y: Y, A: nil, profile)

@@ -9,6 +9,24 @@ import Foundation
 import libjpeg
 import ImageBaseCore
 
+typealias JPEGError = GenericError<JPEG>
+
+private func jmpFn(info: Optional<UnsafeMutablePointer<jpeg_common_struct>>) {
+    var info = info!.pointee
+    let err = info.err.pointee
+    
+    let error: UnsafeMutablePointer<Int8>? = UnsafeMutablePointer<Int8>.allocate(capacity: Int(JMSG_LENGTH_MAX))
+    err.format_message(&info, error)
+    
+    let string = String(cString: error!)
+    print("string: \(string)")
+    
+    let wrapper = info.client_data.assumingMemoryBound(to: JumpWrapper.self).pointee
+    wrapper.error = JPEGError(string)
+    wrapper.longJump()
+}
+
+
 extension PixelType {
     
     var channelCount: Int {
@@ -70,7 +88,7 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
     }
     
     public static func encode(image: Image) throws -> Data {
-        switch image.backing {
+        switch image.removingAlpha().backing {
             case .G(let bitmap): return try encode(bitmap)
             case .RGB(let bitmap): return try encode(bitmap)
             case .GA, .RGBA, .YCbCr, .YCbCrA: throw MiscError()
@@ -78,62 +96,73 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
     }
     
     public static func decode(data: Data) throws -> Image {
+        var wrapper = JumpWrapper()
+        print("wrapper: \(wrapper) \(UnsafeMutablePointer(&wrapper))")
         
-        var info: jpeg_decompress_struct = .init()
-        var err: jpeg_error_mgr = .init()
-        
-        info.err = jpeg_std_error(&err)
-        jpeg_CreateDecompress(&info,
-                              JPEG_LIB_VERSION,
-                              MemoryLayout<jpeg_decompress_struct>.size)
-        
-        jpeg_mem_src(&info, data.address.assumingMemoryBound(to: UInt8.self), UInt(data.count))
-        jpeg_read_header(&info, TRUE);   // read jpeg file header
-        
-        jpeg_start_decompress(&info);    // decompress the file
-        
-        //set width and height
-        let width = info.output_width;
-        let height = info.output_height;
-        let channels = info.num_components;
-        
-        print("\(width)x\(height)")
-        print("scanline: \(info.output_scanline)")
-        
-        
-        let orientation = getOrientation(from: data) ?? .up
-        print("orientation: \(orientation) \(orientation.rawValue)")
-        
-        let image: Image
-        if channels == 3 {
-            let bitmap = Bitmap<RGB<UInt8>>(.init(width, height))
-            for row in bitmap.rowsBuffer {
-                var row: UnsafeMutablePointer<UInt8>? = row
-                jpeg_read_scanlines(&info, &row, 1)
-            }
-            
-            let reoriented = Bitmap<RGB<UInt8>>.from(bitmap, orientation)
-            
-            image = Image(reoriented)
-        } else if channels == 1 {
-            let bitmap = Bitmap<Mono<UInt8>>(.init(width, height))
-            for row in bitmap.rowsBuffer {
-                var row: UnsafeMutablePointer<UInt8>? = row
-                jpeg_read_scanlines(&info, &row, 1)
-            }
-            
-            let reoriented = Bitmap<Mono<UInt8>>.from(bitmap, orientation)
-            
-            image = Image(reoriented)
-        } else {
-            throw MiscError()
+        wrapper.errorHandler = { () -> Error in
+            return MiscError()
         }
         
-        jpeg_finish_decompress(&info)
-        jpeg_destroy_decompress(&info)
-        
-        
-        return image
+        return try wrapper.wrap { () -> Image in
+            var info: jpeg_decompress_struct = .init()
+            var err: jpeg_error_mgr = .init()
+            
+            info.err = jpeg_std_error(&err)
+            err.error_exit = jmpFn
+            info.client_data = UnsafeMutableRawPointer(&wrapper)
+            
+            jpeg_CreateDecompress(&info,
+                                  JPEG_LIB_VERSION,
+                                  MemoryLayout<jpeg_decompress_struct>.size)
+            
+            jpeg_mem_src(&info, data.address.assumingMemoryBound(to: UInt8.self), UInt(data.count))
+            jpeg_read_header(&info, TRUE);   // read jpeg file header
+            
+            jpeg_start_decompress(&info);    // decompress the file
+            
+            //set width and height
+            let width = info.output_width;
+            let height = info.output_height;
+            let channels = info.num_components;
+            
+            print("\(width)x\(height)")
+            print("scanline: \(info.output_scanline)")
+            
+            
+            let orientation = getOrientation(from: data) ?? .up
+            print("orientation: \(orientation) \(orientation.rawValue)")
+            
+            let image: Image
+            if channels == 3 {
+                let bitmap = Bitmap<RGB<UInt8>>(.init(width, height))
+                for row in bitmap.rowsBuffer {
+                    var row: UnsafeMutablePointer<UInt8>? = row
+                    jpeg_read_scanlines(&info, &row, 1)
+                }
+                
+                let reoriented = Bitmap<RGB<UInt8>>.from(bitmap, orientation)
+                
+                image = Image(reoriented)
+            } else if channels == 1 {
+                let bitmap = Bitmap<Mono<UInt8>>(.init(width, height))
+                for row in bitmap.rowsBuffer {
+                    var row: UnsafeMutablePointer<UInt8>? = row
+                    jpeg_read_scanlines(&info, &row, 1)
+                }
+                
+                let reoriented = Bitmap<Mono<UInt8>>.from(bitmap, orientation)
+                
+                image = Image(reoriented)
+            } else {
+                throw MiscError()
+            }
+            
+            jpeg_finish_decompress(&info)
+            jpeg_destroy_decompress(&info)
+            
+            
+            return image
+        }
     }
     
 }

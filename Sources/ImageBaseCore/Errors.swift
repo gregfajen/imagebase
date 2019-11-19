@@ -14,3 +14,8 @@ public struct MiscError: Error {
     }
     
 }
+
+public struct GenericError<T>: Error {
+    let message: String
+    public init(_ message: String = "") { self.message = message }
+}

@@ -29,7 +29,7 @@ let package = Package(
         
         // umbrella
         .target(name: "ImageBase", dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift"]),
-        .target(name: "RunAndPlay", dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift"])
+        .target(name: "RunAndPlay", dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift", "ImageBase"])
         
     ]
 )

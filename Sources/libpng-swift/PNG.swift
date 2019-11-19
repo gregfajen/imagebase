@@ -1,6 +1,22 @@
 import Foundation
 import libpng
 import ImageBaseCore
+import mem
+
+
+
+typealias PNGError = GenericError<PNG>
+
+private func jmpFn(data: Optional<OpaquePointer>, char: Optional<UnsafePointer<Int8>>) {
+    let png: png_structp = data!
+    let wrapper = png_get_error_ptr(png).assumingMemoryBound(to: JumpWrapper.self).pointee
+    
+    let string = String(cString: char!)
+    wrapper.error = PNGError(string)
+    wrapper.longJump()
+}
+
+
 
 func hex(_ byte: UInt8) -> String {
     return String(format: "%02x", byte)
@@ -71,56 +87,55 @@ public struct PNG: FileBasedDecoder, ImageEncoder {
     
     
     public static func decode(fp: UnsafeMutablePointer<FILE>) throws -> Image {
-        var byte: UInt8 = 0
-        fread(&byte, 1, 1, fp)
-        let isPNG = png_sig_cmp(&byte, 1, 1) != 0
-        print("byte: \(hex(byte)) (isPNG: \(isPNG))")
-//        guard isPNG else { throw MiscError() }
-        
-        guard let read: png_structp = png_create_read_struct(PNG_LIBPNG_VER_STRING,
-                                                             nil, nil, nil) else { throw MiscError() }
-        //        { [weak self] in self?.error($0,$1) },
-        //        { [weak self] in self?.warning($0,$1) })
-        
-        let r2 = UnsafeMutablePointer<Optional<OpaquePointer>>(read)
-        
-        guard let info = png_create_info_struct(read) else {
-            png_destroy_read_struct(r2, nil, nil)
-            throw MiscError()
+        try autoreleasepool {
+            var wrapper = JumpWrapper()
+            print("wrapper: \(wrapper) \(UnsafeMutablePointer(&wrapper))")
+            
+            wrapper.errorHandler = { () -> Error in
+                return MiscError()
+            }
+            
+            return try wrapper.wrap { () -> Image in
+                var byte: UInt8 = 0
+                fread(&byte, 1, 1, fp)
+                let isPNG = png_sig_cmp(&byte, 1, 1) != 0
+                print("byte: \(hex(byte)) (isPNG: \(isPNG))")
+                guard isPNG else { throw MiscError() }
+                
+                guard let read: png_structp = png_create_read_struct(PNG_LIBPNG_VER_STRING,
+                                                                     &wrapper,
+                                                                     jmpFn,
+                                                                     nil) else {
+                                                                        throw MiscError()
+                }
+                let r2 = UnsafeMutablePointer<Optional<OpaquePointer>>(read)
+                
+                guard let info = png_create_info_struct(read) else {
+                    png_destroy_read_struct(r2, nil, nil)
+                    throw MiscError()
+                }
+                let i2 = UnsafeMutablePointer<Optional<OpaquePointer>>(info)
+                
+                png_init_io(read, fp)
+                png_set_sig_bytes(read, 1)
+                
+                png_read_info(read, info);
+                
+                let width = Int(png_get_image_width(read, info))
+                let height = Int(png_get_image_height(read, info))
+                let color_type = Int32(png_get_color_type(read, info))
+                //        let bit_depth = png_get_bit_depth(read, info)
+                
+                _ = png_set_interlace_handling(read);
+                png_read_update_info(read, info);
+                
+                let image = decode(color_type, Size(width, height), read, info)
+                
+                png_destroy_read_struct(r2, i2, nil)
+                
+                return image
+            }
         }
-        
-        let i2 = UnsafeMutablePointer<Optional<OpaquePointer>>(info)
-        
-//                guard let endInfo = png_create_info_struct(read) else {
-//                    png_destroy_read_struct(r2, i2, nil)
-//                    throw MiscError()
-//                }
-        
-        //        self.read = read
-        //        self.info = info
-        //        self.endInfo = endInfo
-        
-        
-        png_init_io(read, fp)
-        png_set_sig_bytes(read, 1)
-        //        png_read_png(read, info, 0, nil)
-        
-        png_read_info(read, info);
-        
-        let width = Int(png_get_image_width(read, info))
-        let height = Int(png_get_image_height(read, info))
-        let color_type = Int32(png_get_color_type(read, info))
-//        let bit_depth = png_get_bit_depth(read, info)
-        
-        
-        _ = png_set_interlace_handling(read);
-        png_read_update_info(read, info);
-      
-        let image = decode(color_type, Size(width, height), read, info)
-
-        png_destroy_read_struct(r2, i2, nil)
-        
-        return image
     }
     
     static func encode<P>(_ bitmap: Bitmap<P>) throws -> Data {

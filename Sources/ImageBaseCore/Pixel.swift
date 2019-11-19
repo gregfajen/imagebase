@@ -66,7 +66,7 @@ public protocol Pixel {
 
 public struct Mono<U: Ub>: Pixel {
     
-    let v: U
+    public let v: U
     
     public static var pixelType: PixelType { return .y }
     
@@ -102,8 +102,8 @@ public struct Mono<U: Ub>: Pixel {
 
 public struct MonoAlpha<U: Ub>: Pixel {
     
-    let v: U
-    let a: U
+    public let v: U
+    public let a: U
     
     public static var pixelType: PixelType { return .ya }
     
@@ -146,9 +146,9 @@ public struct MonoAlpha<U: Ub>: Pixel {
 
 public struct RGB<U: Ub>: Pixel {
     
-    let r: U
-    let g: U
-    let b: U
+    public let r: U
+    public let g: U
+    public let b: U
     
     public static var pixelType: PixelType { return .rgb }
     
@@ -202,10 +202,10 @@ public struct RGB<U: Ub>: Pixel {
 
 public struct RGBA<U: Ub>: Pixel {
     
-    let r: U
-    let g: U
-    let b: U
-    let a: U
+    public let r: U
+    public let g: U
+    public let b: U
+    public let a: U
     
     public static var pixelType: PixelType { return .rgba }
     

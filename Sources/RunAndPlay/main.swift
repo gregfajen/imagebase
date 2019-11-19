@@ -13,19 +13,63 @@ import libpng
 import libheif_swift
 import libjpeg_swift
 
+import ImageBaseCore
+import ImageBase
+
 print("HI!")
 
-//for i in [6,7,8] {
-for i in 1...8 {
-    
-    var filename = "/Users/greg/Desktop/or_\(i).JPG"
-    let image = try! JPEG.decode(path: filename)
-    
-    filename = "/Users/greg/Desktop/or_\(i)_out.jpg"
-    let data = try! JPEG.encode(image: image)
-    try! data.write(to: URL(fileURLWithPath: filename))
-    
+do {
+    print("TRYING PNG")
+    let filename = "/Users/greg/Desktop/truncated.png"
+    let _ = try PNG.decode(path: filename)
+} catch let e {
+    print("PNG ERROR: \(e)")
 }
+ 
+
+do {
+    print("TRYING JPEG")
+    let filename = "/Users/greg/Desktop/truncated.jpg"
+    let _ = try JPEG.decode(path: filename)
+} catch let e {
+    print("JPEG ERROR: \(e)")
+}
+
+print("SUCCESS!!! :)")
+
+
+//let names = ["g", "ga", "rgb", "rgba"]
+//let pixelTypes: [PixelType] = [.y, .ya, .rgb, .rgba]
+//
+//for (name, pixelType) in zip(names, pixelTypes) {
+//    var filename = "/Users/greg/Desktop/\(name).png"
+//    var image = try! PNG.decode(path: filename)
+//    if !image.checkNeedsColor() { image = image.removingColor() }
+//    if !image.checkNeedsAlpha() { image = image.removingAlpha() }
+//
+//    assert(image.backing.pixelType! == pixelType)
+//
+//    let targets: [MimeType] = [.heif]
+//    for target in targets {
+//        let data = try! target.encode(image: image)
+//
+//        filename = "/Users/greg/Desktop/\(name)_out.\(target.ext)"
+//        try! data.write(to: URL(fileURLWithPath: filename))
+//    }
+//}
+
+
+//for i in [6,7,8] {
+//for i in 1...8 {
+//
+//    var filename = "/Users/greg/Desktop/or_\(i).JPG"
+//    let image = try! JPEG.decode(path: filename)
+//
+//    filename = "/Users/greg/Desktop/or_\(i)_out.jpg"
+//    let data = try! JPEG.encode(image: image)
+//    try! data.write(to: URL(fileURLWithPath: filename))
+//
+//}
 
 
 
