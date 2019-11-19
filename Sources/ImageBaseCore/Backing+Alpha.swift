@@ -10,8 +10,22 @@ import Foundation
 extension ImageBacking {
     
     func removingAlpha() -> ImageBacking {
-        guard hasAlpha else { return self }
-        fatalError()
+        switch self {
+            case .GA(let bitmap):
+                return .G(bitmap.map { (source: MonoAlpha<U>) -> Mono<U> in
+                    return .init(source.v)
+                })
+            
+            case .RGBA(let bitmap):
+                return .RGB(bitmap.map { (source: RGBA<U>) -> RGB<U> in
+                    return .init(source.r, source.g, source.b)
+                })
+            
+            case .YCbCrA(let Y, let Cb, let Cr, _):
+                return .YCbCr(Y, Cb, Cr)
+            
+            default: return self
+        }
     }
     
     var hasAlpha: Bool {

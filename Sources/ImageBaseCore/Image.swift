@@ -34,4 +34,20 @@ public class Image {
         return Image(try backing.resized(to: new), profile)
     }
     
+    public func checkNeedsAlpha() -> Bool {
+        return backing.checkIfNeedsAlpha()
+    }
+    
+    public func removingAlpha() -> Image {
+        return Image(backing.removingAlpha(), profile)
+    }
+    
+    public func checkNeedsColor() -> Bool {
+        return backing.checkIfNeedsColor()
+    }
+    
+    public func removingColor() -> Image {
+        return Image(backing.removingColor(), profile)
+    }
+    
 }

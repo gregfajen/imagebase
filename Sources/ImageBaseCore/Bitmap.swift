@@ -171,6 +171,21 @@ public class Bitmap<P: Pixel> {
         return bitmap
     }
     
+    public func zip<Q: Pixel, R: Pixel>(with other: Bitmap<Q>, f: (P, Q)->R) -> Bitmap<R> {
+        let result = Bitmap<R>(size)
+        
+        for y in 0..<result.size.height {
+            for x in 0..<result.size.width {
+                let p = sample(x, y)
+                let q = other.sample(x, y)
+                let r = f(p, q)
+                result.set(x, y, v: r)
+            }
+        }
+        
+        return result
+    }
+    
     public static func from<P>(_ source: Bitmap<P>, _ orientation: ImageOrientation = .up) -> Bitmap<P> {
         if orientation == .up { return source }
         
@@ -205,9 +220,20 @@ extension Bitmap where P == RGBA<UInt8> {
     
 }
 
+public extension Ub {
+    
+    func clamp(min: Self, max: Self) -> Self {
+        if self < min { return min }
+        if self > max { return max }
+        return self
+    }
+    
+}
+
 public extension Int {
     
-    func clamp(min: Int, max: Int) -> Int {
+   
+    func clamp(min: Self, max: Self) -> Self {
         if self < min { return min }
         if self > max { return max }
         return self
