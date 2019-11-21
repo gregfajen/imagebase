@@ -17,7 +17,7 @@ public extension MimeType {
     var ext: String {
         switch self {
             case .gif: return "gif"
-            case .heif: return "heif"
+            case .heif: return "heic"
             case .jpeg: return "jpg"
             case .png: return "png"
             case .mp4: return "mp4"

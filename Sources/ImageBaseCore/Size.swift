@@ -10,8 +10,8 @@ import Foundation
 
 public struct Size: Equatable, Hashable {
     
-    public let width: Int
-    public let height: Int
+    public var width: Int
+    public var height: Int
     
     public init<T: FixedWidthInteger>( _ width: T, _ height: T) {
         self.width = Int(width)
