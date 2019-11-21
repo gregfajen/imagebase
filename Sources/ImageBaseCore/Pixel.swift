@@ -34,13 +34,9 @@ extension Ub {
     
 }
 
-extension UInt8: Ub {
-    
-}
-
-extension UInt64: Ub {
-    
-}
+extension UInt8: Ub { }
+extension UInt16: Ub { }
+extension UInt64: Ub { }
 
 public enum PixelType {
     case y, ya, rgb, rgba
@@ -50,9 +46,12 @@ public protocol Pixel {
     
     associatedtype U: Ub
     associatedtype W: Pixel
+    associatedtype Eight: Pixel
+    associatedtype Sixteen: Pixel
     
     static var pixelType: PixelType { get }
     
+    var eight: Eight { get }
     var w: W { get }
     init(_ w: W)
     
@@ -72,10 +71,19 @@ public struct Mono<U: Ub>: Pixel {
     
     public init(_ v: U) { self.v = v }
     
+    public typealias Eight = Mono<UInt8>
+    public typealias Sixteen = Mono<UInt16>
     public typealias W = Mono<UInt64>
     
     public init(_ w: W) {
         v = U(w.v)
+    }
+    
+    public var eight: Mono<UInt8> {
+        if let self = self as? Mono<UInt8> { return self }
+        guard self is Mono<UInt16> else { fatalError() }
+        
+        return .init(UInt8(v>>8))
     }
     
     public var w: W {
@@ -112,7 +120,16 @@ public struct MonoAlpha<U: Ub>: Pixel {
         self.a = a
     }
     
+    public typealias Eight = MonoAlpha<UInt8>
+    public typealias Sixteen = MonoAlpha<UInt16>
     public typealias W = MonoAlpha<UInt64>
+    
+    public var eight: MonoAlpha<UInt8> {
+        if let self = self as? MonoAlpha<UInt8> { return self }
+        guard self is MonoAlpha<UInt16> else { fatalError() }
+        
+        return .init(UInt8(v>>8), UInt8(a>>8))
+    }
     
     public init(_ w: W) {
         v = U(w.v)
@@ -164,12 +181,21 @@ public struct RGB<U: Ub>: Pixel {
         self.b = U(normalizing: b)
     }
     
+    public typealias Eight = RGB<UInt8>
+    public typealias Sixteen = RGB<UInt16>
     public typealias W = RGB<UInt64>
     
     public init(_ w: RGB<UInt64>) {
         r = U(w.r)
         g = U(w.g)
         b = U(w.b)
+    }
+    
+    public var eight: Eight {
+        if let self = self as? Eight { return self }
+        guard self is Sixteen else { fatalError() }
+        
+        return .init(UInt8(r>>8), UInt8(g>>8), UInt8(b>>8))
     }
     
     public var w: W {
@@ -223,7 +249,16 @@ public struct RGBA<U: Ub>: Pixel {
         self.a = a
     }
     
+    public typealias Eight = RGBA<UInt8>
+    public typealias Sixteen = RGBA<UInt16>
     public typealias W = RGBA<UInt64>
+    
+    public var eight: Eight {
+        if let self = self as? Eight { return self }
+        guard self is Sixteen else { fatalError() }
+        
+        return .init(UInt8(r>>8), UInt8(g>>8), UInt8(b>>8), UInt8(a>>8))
+    }
     
     public init(_ w: RGBA<UInt64>) {
         r = U(w.r)

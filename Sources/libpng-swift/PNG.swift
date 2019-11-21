@@ -57,7 +57,7 @@ public struct PNG: FileBasedDecoder, ImageEncoder {
         
         let prof = png_get_iCCP2(png, info)
         
-        let image = Image(bitmap)
+        let image = Image(bitmap.as8Bit())
         image.profile = ColorProfile(prof)
         
         return image
@@ -65,20 +65,46 @@ public struct PNG: FileBasedDecoder, ImageEncoder {
     
     private static func decode(_ type: Int32,
                                _ size: Size,
+                               _ bitDepth: UInt8,
                                _ png: png_structp,
-                               _ info: png_infop) -> Image {
+                               _ info: png_infop) throws -> Image {
+        
+        let is16: Bool
+        switch bitDepth {
+            case 8:  is16 = false
+            case 16: is16 = true
+            default: throw MiscError()
+        }
+        
+        
         switch type {
             case PNG_COLOR_TYPE_GRAY:
-                return decode(Mono<UInt8>.self, size, png, info)
+                if is16 {
+                    return decode(Mono<UInt16>.self, size, png, info)
+                } else {
+                    return decode(Mono<UInt8>.self, size, png, info)
+                }
             
             case PNG_COLOR_TYPE_GA:
-                return decode(MonoAlpha<UInt8>.self, size, png, info)
+                if is16 {
+                    return decode(MonoAlpha<UInt16>.self, size, png, info)
+                } else {
+                    return decode(MonoAlpha<UInt8>.self, size, png, info)
+                }
             
             case PNG_COLOR_TYPE_RGB:
-                return decode(RGB<UInt8>.self, size, png, info)
+                if is16 {
+                    return decode(RGB<UInt16>.self, size, png, info)
+                } else {
+                    return decode(RGB<UInt8>.self, size, png, info)
+                }
             
             case PNG_COLOR_TYPE_RGBA:
-                return decode(RGBA<UInt8>.self, size, png, info)
+                if is16 {
+                    return decode(RGBA<UInt16>.self, size, png, info)
+                } else {
+                    return decode(RGBA<UInt8>.self, size, png, info)
+                }
             
             default: fatalError()
         }
@@ -124,12 +150,12 @@ public struct PNG: FileBasedDecoder, ImageEncoder {
                 let width = Int(png_get_image_width(read, info))
                 let height = Int(png_get_image_height(read, info))
                 let color_type = Int32(png_get_color_type(read, info))
-                //        let bit_depth = png_get_bit_depth(read, info)
+                let bit_depth = png_get_bit_depth(read, info)
                 
                 _ = png_set_interlace_handling(read);
                 png_read_update_info(read, info);
                 
-                let image = decode(color_type, Size(width, height), read, info)
+                let image = try decode(color_type, Size(width, height), bit_depth, read, info)
                 
                 png_destroy_read_struct(r2, i2, nil)
                 

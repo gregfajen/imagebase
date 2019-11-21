@@ -18,24 +18,24 @@ import ImageBase
 
 print("HI!")
 
-do {
+//do {
     print("TRYING PNG")
-    let filename = "/Users/greg/Desktop/truncated.png"
-    let _ = try PNG.decode(path: filename)
-} catch let e {
-    print("PNG ERROR: \(e)")
-}
+    let filename = "/Users/greg/Desktop/80b2370922364b8d8049b6bb0a6f760e.png"
+    let _ = try! PNG.decode(path: filename)
+//} catch let e {
+//    print("PNG ERROR: \(e)")
+//}
  
 
-do {
-    print("TRYING JPEG")
-    let filename = "/Users/greg/Desktop/truncated.jpg"
-    let _ = try JPEG.decode(path: filename)
-} catch let e {
-    print("JPEG ERROR: \(e)")
-}
-
-print("SUCCESS!!! :)")
+//do {
+//    print("TRYING JPEG")
+//    let filename = "/Users/greg/Desktop/truncated.jpg"
+//    let _ = try JPEG.decode(path: filename)
+//} catch let e {
+//    print("JPEG ERROR: \(e)")
+//}
+//
+//print("SUCCESS!!! :)")
 
 
 //let names = ["g", "ga", "rgb", "rgba"]
