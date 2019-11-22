@@ -17,7 +17,7 @@ public protocol ImageDecoder {
     
     static func decode(path: String) throws -> Image
     static func decode(data: Data) throws -> Image
-    static func decode(file: PseudoFile) throws -> Image
+//    static func decode(file: PseudoFile) throws -> Image
     static func decode(fp: UnsafeMutablePointer<FILE>) throws -> Image
     
 }
@@ -34,10 +34,10 @@ public extension DataBasedDecoder {
         return try decode(data: data)
     }
     
-    static func decode(file: PseudoFile) throws -> Image {
-        let data = Data(bytesNoCopy: file.ptr, count: file.size, deallocator: .none)
-        return try decode(data: data)
-    }
+//    static func decode(file: PseudoFile) throws -> Image {
+//        let data = Data(bytesNoCopy: file.ptr, count: file.size, deallocator: .none)
+//        return try decode(data: data)
+//    }
     
     static func decode(fp: UnsafeMutablePointer<FILE>) throws -> Image {
         let data = Data(fp: fp)
@@ -61,15 +61,19 @@ public extension FileBasedDecoder {
     }
     
     static func decode(data: Data) throws -> Image {
-        return try decode(file: PseudoFile(data))
+        guard let fp = tmpfile() else { throw MiscError() }
+        fwrite(data.address, 1, data.count, fp)
+        fseek(fp, 0, SEEK_SET)
+        
+        return try decode(fp: fp)
     }
     
-    static func decode(file: PseudoFile) throws -> Image {
-        guard let fp = fdopen(file.fd, "rb") else { throw MiscError() }
-        let bitmap = try decode(fp: fp)
-        fclose(fp)
-        return bitmap
-    }
+//    static func decode(file: PseudoFile) throws -> Image {
+//        guard let fp = fdopen(file.fd, "rb") else { throw MiscError() }
+//        let bitmap = try decode(fp: fp)
+//        fclose(fp)
+//        return bitmap
+//    }
     
 }
 

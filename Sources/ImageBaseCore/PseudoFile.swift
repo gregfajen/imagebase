@@ -8,6 +8,7 @@
 import Foundation
 import mem
 
+/*
 public class PseudoFile {
     
     let name: String
@@ -39,3 +40,4 @@ public class PseudoFile {
     }
     
 }
+*/
