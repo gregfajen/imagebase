@@ -11,6 +11,8 @@
 #import <sys/mman.h>
 #endif
 
+#import "mem.h"
+
 
 int shm_open2(const char* name, int mode, int perm) {
     return shm_open(name, mode, perm);
