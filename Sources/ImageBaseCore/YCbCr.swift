@@ -15,6 +15,20 @@ func convertRGBtoYCbCr(R: UInt8, G: UInt8, B: UInt8) -> (UInt8,UInt8,UInt8) {
     let B = Int(B)
     
     let Y = (77 * R + 150 * G + 29 * B) >> 8
+    let U = (144 * (B - Y)) >> 8 + 128
+    let V = (183 * (R - Y)) >> 8 + 128
+    
+    return (UInt8(Y.clamp(min: 0, max: 255)), UInt8(U.clamp(min: 0, max: 255)), UInt8(V.clamp(min: 0, max: 255)))
+}
+
+func convertRGBtoYCbCrRed(R: UInt8, G: UInt8, B: UInt8) -> (UInt8,UInt8,UInt8) {
+    // actually YUV
+    
+    let R = Int(R)
+    let G = Int(G)
+    let B = Int(B)
+    
+    let Y = (77 * R + 150 * G + 29 * B) >> 8
     let U = (126 * (B - Y)) >> 8 + 128
     let V = (225 * (R - Y)) >> 8 + 128
     

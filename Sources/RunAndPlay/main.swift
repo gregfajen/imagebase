@@ -20,10 +20,17 @@ print("HI!")
 
 //do {
     print("TRYING PNG")
-    let filename = "/Users/greg/Desktop/80b2370922364b8d8049b6bb0a6f760e.png"
-    let _ = try! PNG.decode(path: filename)
+    var filename = "/Users/greg/Desktop/original.png"
+    let image = try! PNG.decode(path: filename)
+
+
+let heif = try! HEIF.encode(image: image)
+filename = "/Users/greg/Desktop/orange.heic"
+    try! heif.write(to: URL(fileURLWithPath: filename))
+    
+
 //} catch let e {
-//    print("PNG ERROR: \(e)")
+//    print("PNG ERROR: \(e)")j
 //}
  
 
