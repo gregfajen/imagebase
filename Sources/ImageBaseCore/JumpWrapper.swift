@@ -9,7 +9,7 @@ import Foundation
 import mem
 
 #if os(Linux)
-public func autoreleasepool<T>(_ f: () throws -> T) throws -> T { return f() }
+public func autoreleasepool<T>(_ f: () throws -> T) throws -> T { return try f() }
 #endif
 
 private func runFn(data: UnsafeMutableRawPointer!) {
