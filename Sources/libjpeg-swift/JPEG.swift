@@ -50,6 +50,9 @@ extension PixelType {
 
 public struct JPEG: DataBasedDecoder, ImageEncoder {
     
+    static let TRUE: boolean = .init(1)
+    static let FALSE: boolean = .init(0)
+    
     static func encode<P>(_ bitmap: Bitmap<P>) throws -> Data {
         var info: jpeg_compress_struct = .init()
         var err: jpeg_error_mgr = .init()
