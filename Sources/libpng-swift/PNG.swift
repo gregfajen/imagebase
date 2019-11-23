@@ -1,3 +1,7 @@
+#if os(Linux)
+import glibc
+#endif
+
 import Foundation
 import libpng
 import ImageBaseCore
