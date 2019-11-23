@@ -8,6 +8,10 @@
 import Foundation
 import mem
 
+#if os(Linux)
+public func autoreleasepool<T>(_ f:()->T) throws -> T { return f() }
+#endif
+
 private func runFn(data: UnsafeMutableRawPointer!) {
     let wrapper = data.assumingMemoryBound(to: JumpWrapper.self).pointee
     wrapper.run()
