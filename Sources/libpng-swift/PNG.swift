@@ -1,5 +1,5 @@
 #if os(Linux)
-import glibc
+import Glibc
 #endif
 
 import Foundation
