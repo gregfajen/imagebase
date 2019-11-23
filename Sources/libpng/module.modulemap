@@ -1,4 +1,5 @@
 
 module libpng {
+    header "sys/types.h"
     umbrella header "libpng.h"
 }
