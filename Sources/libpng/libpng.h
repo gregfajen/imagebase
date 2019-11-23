@@ -6,6 +6,7 @@
 
 #if __linux__
 
+#import "sys/types.h"
 #include <time.h>
 #include "/usr/include/libpng/png.h"
 
