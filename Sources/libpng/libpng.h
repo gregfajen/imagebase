@@ -6,6 +6,7 @@
 
 #if __linux__
 
+#include "time.h"
 #include "/usr/include/libpng/png.h"
 
 #elif __APPLE__
