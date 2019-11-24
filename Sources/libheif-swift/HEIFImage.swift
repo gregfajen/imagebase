@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Greg Fajen on 11/13/19.
 //
@@ -12,6 +12,10 @@ import ImageBaseCore
 public class HEIFImage {
     
     let image: heif_image_ptr
+    
+    deinit {
+        heif_image_release(image)
+    }
     
     convenience init(GA: Bitmap<MonoAlpha<UInt8>>, _ profile: ColorProfile?) throws {
         let (Y, A) = GA.unzip { (ga: MonoAlpha<UInt8>) -> (Mono<UInt8>, Mono<UInt8>) in
@@ -112,46 +116,46 @@ public class HEIFImage {
         print("string: \(string)")
         print("prof: \(profile.length)")
         
-//        var x: UInt32 = heif_color_profile_type_rICC.rawValue
-//
-//        let p = UnsafeRawPointer(&x)
-//        let p2: UnsafePointer<UInt8>? = p.assumingMemoryBound(to: UInt8.self)
+        //        var x: UInt32 = heif_color_profile_type_rICC.rawValue
+        //
+        //        let p = UnsafeRawPointer(&x)
+        //        let p2: UnsafePointer<UInt8>? = p.assumingMemoryBound(to: UInt8.self)
         
-////        let type: [UInt8] = ["r", "i", "c", "c"]
-//        let x = UnsafePointer(&heif_color_profile_type_rICC)
-//        let p = UnsafeMutablePointer(mutating: heif_color_profile_type_rICC)
-//        
-//        let type = OpaquePointer(&heif_color_profile_type_rICC)
+        ////        let type: [UInt8] = ["r", "i", "c", "c"]
+        //        let x = UnsafePointer(&heif_color_profile_type_rICC)
+        //        let p = UnsafeMutablePointer(mutating: heif_color_profile_type_rICC)
+        //
+        //        let type = OpaquePointer(&heif_color_profile_type_rICC)
         
         let error = heif_image_set_raw_color_profile(image,
-                                         "prof",
-                                         profile.pointer,
-                                         profile.length)
+                                                     "prof",
+                                                     profile.pointer,
+                                                     profile.length)
         if error.exists {
             throw error
         }
     }
     
-//    public typealias Plane = UnsafeMutablePointer<UInt8>
-//    public func write(block: (Plane, Plane, Plane, Int, Int, Int)->()) {
-//        var sY: Int32 = 0
-//        var sCb: Int32 = 0
-//        var sCr: Int32 = 0
-//        let Y = heif_image_get_plane(image, heif_channel_Y, &sY)
-//        let Cb = heif_image_get_plane(image, heif_channel_Cb, &sCb)
-//        let Cr = heif_image_get_plane(image, heif_channel_Cr, &sCr)
-//        print("sY \(sY)")
-//        print("sCb \(sCb)")
-//        print("sCr \(sCr)")
-//        block(Y!, Cb!, Cr!, Int(sY), Int(sCb), Int(sCr))
-//    }
+    //    public typealias Plane = UnsafeMutablePointer<UInt8>
+    //    public func write(block: (Plane, Plane, Plane, Int, Int, Int)->()) {
+    //        var sY: Int32 = 0
+    //        var sCb: Int32 = 0
+    //        var sCr: Int32 = 0
+    //        let Y = heif_image_get_plane(image, heif_channel_Y, &sY)
+    //        let Cb = heif_image_get_plane(image, heif_channel_Cb, &sCb)
+    //        let Cr = heif_image_get_plane(image, heif_channel_Cr, &sCr)
+    //        print("sY \(sY)")
+    //        print("sCb \(sCb)")
+    //        print("sCr \(sCr)")
+    //        block(Y!, Cb!, Cr!, Int(sY), Int(sCb), Int(sCr))
+    //    }
     
 }
 
 
 extension HEIFImage {
     
-    public func encode(context: HEIFContext, encoder: HEIFEncoder) throws -> HEIFImageHandler {
+    public func encode(context: HEIFContext, encoder: HEIFEncoder) throws -> heif_image_handler_ptr {
         
         print("image: \(self)")
         print("   size: \(heif_image_get_width(image, heif_channel_Y))x\(heif_image_get_height(image, heif_channel_Y))")
@@ -164,7 +168,7 @@ extension HEIFImage {
                                               &result)
         if error.exists { throw error }
         
-        return HEIFImageHandler(result!)
+        return result!
     }
     
 }

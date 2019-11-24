@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Greg Fajen on 11/13/19.
 //
@@ -24,6 +24,10 @@ public class HEIFEncoder {
         } else {
             fatalError()
         }
+    }
+    
+    deinit {
+        heif_encoder_release(encoder)
     }
     
     public var lossyQuality: Int = 100 {

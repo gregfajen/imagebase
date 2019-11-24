@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Greg Fajen on 11/15/19.
 //
@@ -29,7 +29,7 @@ public class Bitmap<P: Pixel> {
         self.size = size
         self.stride = stride
         data = malloc(bitmapSize).assumingMemoryBound(to: P.self)
-//        data = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: bitmapSize)
+        //        data = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: bitmapSize)
     }
     
     deinit {
@@ -78,6 +78,10 @@ public class Bitmap<P: Pixel> {
     
     // I don't like this function because I think it does a lot of branching
     // in what's intended to be a tight loop
+    @_specialize(exported: true, where P == Mono<UInt8>)
+    @_specialize(exported: true, where P == MonoAlpha<UInt8>)
+    @_specialize(exported: true, where P == RGB<UInt8>)
+    @_specialize(exported: true, where P == RGBA<UInt8>)
     func linearInterpolate(_ x: Float, _ y: Float) -> P {
         let width = size.width
         let height = size.height
@@ -103,17 +107,21 @@ public class Bitmap<P: Pixel> {
         
         let p = xy1.mix(xy2, ty)
         return p
-//
-//        let v: P.W = sample(x1, y1).w
-//            + sample(x1, y2).w
-//            + sample(x2, y1).w
-//            + sample(x2, y2).w
-//
-//        let v2 = v >> 2
-//
-//        return P(v2)
+        //
+        //        let v: P.W = sample(x1, y1).w
+        //            + sample(x1, y2).w
+        //            + sample(x2, y1).w
+        //            + sample(x2, y2).w
+        //
+        //        let v2 = v >> 2
+        //
+        //        return P(v2)
     }
     
+    @_specialize(exported: true, where P == Mono<UInt8>)
+    @_specialize(exported: true, where P == MonoAlpha<UInt8>)
+    @_specialize(exported: true, where P == RGB<UInt8>)
+    @_specialize(exported: true, where P == RGBA<UInt8>)
     func halved() throws -> Bitmap<P> {
         let half = Size(size.width/2, size.height/2)
         guard half * 2 == size else { throw MiscError(/*"size not even"*/) }
@@ -127,9 +135,9 @@ public class Bitmap<P: Pixel> {
                 
                 
                 let p = P((sample(x2+0, y2+0).w +
-                        sample(x2+1, y2+0).w +
-                        sample(x2+0, y2+1).w +
-                        sample(x2+1, y2+1).w) >> 2)
+                    sample(x2+1, y2+0).w +
+                    sample(x2+0, y2+1).w +
+                    sample(x2+1, y2+1).w) >> 2)
                 
                 target.set(x,y,v: p)
             }
@@ -138,6 +146,10 @@ public class Bitmap<P: Pixel> {
         return target
     }
     
+    @_specialize(exported: true, where P == Mono<UInt8>)
+    @_specialize(exported: true, where P == MonoAlpha<UInt8>)
+    @_specialize(exported: true, where P == RGB<UInt8>)
+    @_specialize(exported: true, where P == RGBA<UInt8>)
     func resized(to new: Size) throws -> Bitmap<P> {
         let bitmap = Bitmap<P>(new)
         
@@ -167,7 +179,7 @@ public class Bitmap<P: Pixel> {
                 bitmap.set(x, y, v: q)
             }
         }
-    
+        
         return bitmap
     }
     
@@ -203,7 +215,11 @@ public class Bitmap<P: Pixel> {
         return (qr, rr)
     }
     
-    public static func from<P>(_ source: Bitmap<P>, _ orientation: ImageOrientation = .up) -> Bitmap<P> {
+    @_specialize(exported: true, where P == Mono<UInt8>)
+    @_specialize(exported: true, where P == MonoAlpha<UInt8>)
+    @_specialize(exported: true, where P == RGB<UInt8>)
+    @_specialize(exported: true, where P == RGBA<UInt8>)
+    public static func from(_ source: Bitmap<P>, _ orientation: ImageOrientation = .up) -> Bitmap<P> {
         if orientation == .up { return source }
         
         let size = source.size.after(orientation)
@@ -249,7 +265,7 @@ public extension Ub {
 
 public extension Int {
     
-   
+    
     func clamp(min: Self, max: Self) -> Self {
         if self < min { return min }
         if self > max { return max }

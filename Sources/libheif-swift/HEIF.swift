@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Greg Fajen on 11/16/19.
 //
@@ -22,8 +22,8 @@ public struct HEIF: ImageEncoder {
             
             case .G(let Y):
                 return try HEIFImage(Y: Y, A: nil, profile)
-//            case .GA(let Y, let A):
-//                return try HEIFImage(Y: Y, A: A, profile)
+            //            case .GA(let Y, let A):
+            //                return try HEIFImage(Y: Y, A: A, profile)
             
             case .YCbCr(let Y, let Cb, let Cr):
                 return try HEIFImage(Y: Y, Cb: Cb, Cr: Cr, A: nil, profile)
@@ -36,7 +36,7 @@ public struct HEIF: ImageEncoder {
         let backing = try image.backing.asYCbCr().as420()
         let image = try self.image(for: backing, image.profile)
         
-//        let image = try HEIFImage(Y: y, Cb: cb, Cr: cr, image.profile)
+        //        let image = try HEIFImage(Y: y, Cb: cb, Cr: cr, image.profile)
         
         
         let data = try heif_write(image: image)
