@@ -35,6 +35,23 @@ extension ImageBacking {
         }
     }
     
+    func addingColor() -> ImageBacking {
+        switch self {
+            case .G(let bitmap):
+                return .RGB(bitmap.map { (source: Mono<U>) -> RGB<U> in
+                    return .init(source.v, source.v, source.v)
+                })
+            
+            case .GA(let bitmap):
+                return .RGBA(bitmap.map { (source: MonoAlpha<U>) -> RGBA<U> in
+                    return .init(source.v, source.v, source.v, source.a)
+                })
+            
+            case .RGB, .RGBA, .YCbCr, .YCbCrA:
+                return self
+        }
+    }
+    
     var hasColor: Bool {
         switch self {
             case .G, .GA: return false

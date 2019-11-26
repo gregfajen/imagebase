@@ -50,4 +50,8 @@ public class Image {
         return Image(backing.removingColor(), profile)
     }
     
+    public func addingColor() -> Image {
+        return Image(backing.addingColor(), profile)
+    }
+    
 }

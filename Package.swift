@@ -27,9 +27,13 @@ let package = Package(
         .systemLibrary(name: "libheif", pkgConfig: "libheif", providers: [.apt(["libheif-dev"]), .brew(["libheif"])]),
         .target(name: "libheif-swift", dependencies: ["libheif", "ImageBaseCore"]),
         
+        // libwebp
+        .systemLibrary(name: "libwebp", pkgConfig: "libwebp", providers: [.apt(["libwebp-dev"]), .brew(["webp"])]),
+        .target(name: "libwebp-swift", dependencies: ["libwebp", "ImageBaseCore"]),
+        
         // umbrella
-        .target(name: "ImageBase", dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift"]),
-        .target(name: "RunAndPlay", dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift", "ImageBase"])
+        .target(name: "ImageBase", dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift", "libwebp-swift"]),
+        .target(name: "RunAndPlay", dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift", "libwebp-swift", "ImageBase"])
         
     ]
 )

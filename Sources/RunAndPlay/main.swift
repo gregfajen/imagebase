@@ -12,21 +12,30 @@ import libpng
 
 import libheif_swift
 import libjpeg_swift
+import libwebp_swift
 
 import ImageBaseCore
 import ImageBase
 
 print("HI!")
 
+var filename = "/Users/greg/Desktop/ness.png"
+let image = try! PNG.decode(path: filename)
+
+let data = try! WEBP.encode(image: image)
+filename = "/Users/greg/Desktop/ness.webp"
+try! data.write(to: URL(fileURLWithPath: filename))
+
+
 //do {
-    print("TRYING PNG")
-    var filename = "/Users/greg/Desktop/original.png"
-    let image = try! PNG.decode(path: filename)
-
-
-let heif = try! HEIF.encode(image: image)
-filename = "/Users/greg/Desktop/orange.heic"
-    try! heif.write(to: URL(fileURLWithPath: filename))
+//    print("TRYING PNG")
+//    var filename = "/Users/greg/Desktop/original.png"
+//    let image = try! PNG.decode(path: filename)
+//
+//
+//let heif = try! HEIF.encode(image: image)
+//filename = "/Users/greg/Desktop/orange.heic"
+//    try! heif.write(to: URL(fileURLWithPath: filename))
     
 
 //} catch let e {
