@@ -11,6 +11,7 @@ import ImageBaseCore
 import libpng_swift
 import libheif_swift
 import libjpeg_swift
+import libwebp_swift
 
 public extension MimeType {
     
@@ -21,6 +22,7 @@ public extension MimeType {
             case .jpeg: return "jpg"
             case .png: return "png"
             case .mp4: return "mp4"
+            case .webp: return "webp"
         }
     }
     
@@ -29,6 +31,7 @@ public extension MimeType {
             case .png: return try PNG.encode(image: image)
             case .heif: return try HEIF.encode(image: image)
             case .jpeg: return try JPEG.encode(image: image)
+            case .webp: return try WEBP.encode(image: image)
             default: throw MiscError()
         }
     }
