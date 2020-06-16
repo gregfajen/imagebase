@@ -4,14 +4,16 @@
 import PackageDescription
 
 let package = Package(
+    
     name: "imagebase",
+    
     products: [
-//        .library(name: "ImageBase", targets: ["ImageBase"]),
-//        .executable(name: "RunAndPlay", targets: ["RunAndPlay"])
+        .library(name: "ImageBase", targets: ["ImageBase"]),
+        .executable(name: "RunAndPlay", targets: ["RunAndPlay"])
     ],
-    dependencies: [
-//        .package(url: "/Users/greg/Projects/2020/libheif/", .branch("master")),
-    ],
+    
+    dependencies: [],
+    
     targets: [
         // core
         .systemLibrary(name: "mem"),
