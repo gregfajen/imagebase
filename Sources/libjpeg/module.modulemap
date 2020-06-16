@@ -1,4 +1,6 @@
 
-module libjpeg {
-    umbrella header "libjpeg.h"
+module libjpeg [system] {
+    header "libjpeg.h"
+    link "libjpeg"
+    export *
 }

@@ -9,7 +9,7 @@ import Foundation
 
 
 public enum MimeType: String {
-    case heif = "image/heif"
+    case heif = "image/heic"
     case jpeg = "image/jpeg"
     case png  = "image/png"
     case gif  = "image/gif"

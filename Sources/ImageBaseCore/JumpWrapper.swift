@@ -38,23 +38,26 @@ private func jmpFn(_ env: UnsafeMutablePointer<jmp_buf>) {
 public class JumpWrapper {
     
     public var _env: jmp_buf
-    public var env: UnsafeMutablePointer<jmp_buf>
+//    public var env: UnsafeMutablePointer<jmp_buf>
     
     public init() {
         _env = UnsafeMutablePointer<jmp_buf>.allocate(capacity: 1).pointee
-        env = UnsafeMutablePointer<jmp_buf>(&_env)
+//        env = UnsafeMutablePointer<jmp_buf>(&_env)
         
     }
     
     private var result: Any?
     public var error: Error?
-    private var action: (() throws -> Any)?
+    private var action: ((UnsafeMutableRawBufferPointer) throws -> Any)?
     
     public var errorHandler: (()->Error)?
     
     fileprivate func run() {
         do {
-            result = try action!();
+            var wrapper = self
+            try withUnsafeMutableBytes(of: &wrapper) { pointer in
+                result = try action!(pointer)
+            }
         } catch let e {
             error = e
         }
@@ -64,11 +67,11 @@ public class JumpWrapper {
         error = error ?? errorHandler?() ?? MiscError()
     }
     
-    public func wrap<T>(_ f: @escaping () throws -> (T)) throws -> T {
+    public func wrap<T>(_ f: @escaping (UnsafeMutableRawBufferPointer) throws -> (T)) throws -> T {
         action = f
         
         var me = self
-        wrap_jump(runFn, errFn, &me, env)
+        wrap_jump(runFn, errFn, &me, &_env)
         
         if let error = error {
             throw error
@@ -82,7 +85,7 @@ public class JumpWrapper {
 //    }
     
     public func longJump() {
-        jmpFn(env)
+        jmpFn(&_env)
     }
     
 }

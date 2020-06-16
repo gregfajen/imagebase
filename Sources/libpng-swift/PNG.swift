@@ -119,13 +119,13 @@ public struct PNG: FileBasedDecoder, ImageEncoder {
     public static func decode(fp: UnsafeMutablePointer<FILE>) throws -> Image {
         try autoreleasepool {
             var wrapper = JumpWrapper()
-            print("wrapper: \(wrapper) \(UnsafeMutablePointer(&wrapper))")
+//            print("wrapper: \(wrapper) \(UnsafeMutablePointer(&wrapper))")
             
             wrapper.errorHandler = { () -> Error in
                 return MiscError()
             }
             
-            return try wrapper.wrap { () -> Image in
+            return try wrapper.wrap { _ -> Image in
                 var byte: UInt8 = 0
                 fread(&byte, 1, 1, fp)
                 let isPNG = png_sig_cmp(&byte, 1, 1) != 0

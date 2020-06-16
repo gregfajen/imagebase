@@ -1,4 +1,6 @@
 
-module libheif {
-    umbrella header "libheif.h"
+module libheif [system] {
+    header "libheif.h"
+    link "libheif"
+    export *
 }

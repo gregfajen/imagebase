@@ -8,13 +8,11 @@
 
 #import "sys/types.h"
 #include <time.h>
-#include "/usr/include/libpng/png.h"
-
-#elif __APPLE__
-
-#include "/usr/local/Cellar/libpng/1.6.37/include/png.h"
 
 #endif
+
+
+#include <png.h>
 
 typedef struct {
     png_charp name;

@@ -1,4 +1,6 @@
 
-module libpng {
-    umbrella header "libpng.h"
+module libpng [system] {
+    header "libpng.h"
+    link "libpng"
+    export *
 }

@@ -1,4 +1,6 @@
 
-module libwebp {
-    umbrella header "libwebp.h"
+module libwebp [system] {
+    header "libwebp.h"
+    link "libwebp"
+    export *
 }

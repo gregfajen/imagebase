@@ -99,26 +99,25 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
     }
     
     public static func decode(data: Data) throws -> Image {
-        var wrapper = JumpWrapper()
-        print("wrapper: \(wrapper) \(UnsafeMutablePointer(&wrapper))")
+        let wrapper = JumpWrapper()
         
         wrapper.errorHandler = { () -> Error in
             return MiscError()
         }
         
-        return try wrapper.wrap { () -> Image in
+        return try wrapper.wrap { pointer -> Image in
             var info: jpeg_decompress_struct = .init()
             var err: jpeg_error_mgr = .init()
             
             info.err = jpeg_std_error(&err)
             err.error_exit = jmpFn
-            info.client_data = UnsafeMutableRawPointer(&wrapper)
+            info.client_data = pointer.baseAddress!
             
             jpeg_CreateDecompress(&info,
                                   JPEG_LIB_VERSION,
                                   MemoryLayout<jpeg_decompress_struct>.size)
             
-            jpeg_mem_src(&info, data.address.assumingMemoryBound(to: UInt8.self), UInt(data.count))
+            jpeg_mem_src(&info, data.address.assumingMemoryBound(to: UInt8.self), Int(data.count))
             jpeg_read_header(&info, TRUE);   // read jpeg file header
             
             jpeg_start_decompress(&info);    // decompress the file
