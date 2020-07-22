@@ -6,12 +6,12 @@
 //
 
 import Foundation
-@exported import ImageBaseCore
+@_exported import ImageBaseCore
 
-@exported import libpng_swift
-@exported import libheif_swift
-@exported import libjpeg_swift
-@exported import libwebp_swift
+@_exported import libpng_swift
+@_exported import libheif_swift
+@_exported import libjpeg_swift
+@_exported import libwebp_swift
 
 public extension MimeType {
     
