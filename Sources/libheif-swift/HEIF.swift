@@ -9,8 +9,8 @@ import Foundation
 import ImageBaseCore
 import libheif
 
-public struct HEIF: ImageEncoder {
-    
+public struct HEIF: ImageEncoder, DataBasedDecoder {
+
     static func image(for backing: ImageBacking<UInt8>,
                       _ profile: ColorProfile?) throws -> HEIFImage {
         
@@ -41,6 +41,11 @@ public struct HEIF: ImageEncoder {
         
         let data = try heif_write(image: image)
         return data
+    }
+    
+    public static func decode(data: Data) throws -> Image {
+        let heif = try HEIFImage.reading(data)
+        return heif.image
     }
     
 }

@@ -22,6 +22,21 @@ class WriterHelper {
     
 }
 
+func heif_read(data: Data) throws -> HEIFImage {
+    let context = HEIFContext()
+    _ = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
+        heif_context_read_from_memory_without_copy(context.context, pointer.baseAddress, data.count, nil)
+    }
+    
+    var handle: OpaquePointer?
+    heif_context_get_primary_image_handle(context.context, &handle);
+    
+    var image: OpaquePointer?
+    heif_decode_image(handle, &image, heif_colorspace_RGB, heif_chroma_interleaved_RGB, nil)
+    
+    return HEIFImage(image!)
+}
+
 func heif_write(image: HEIFImage) throws -> Data {
     
     

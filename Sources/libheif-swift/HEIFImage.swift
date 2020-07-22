@@ -11,10 +11,18 @@ import ImageBaseCore
 
 public class HEIFImage {
     
-    let image: heif_image_ptr
+    let ptr: heif_image_ptr
     
     deinit {
-        heif_image_release(image)
+        heif_image_release(ptr)
+    }
+    
+    init(_ image: heif_image_ptr) {
+        self.ptr = image
+    }
+    
+    public static func reading(_ data: Data) throws -> HEIFImage {
+        try heif_read(data: data)
     }
     
     convenience init(GA: Bitmap<MonoAlpha<UInt8>>, _ profile: ColorProfile?) throws {
@@ -39,7 +47,7 @@ public class HEIFImage {
         if error.exists { throw error }
         
         guard let image = result else { throw MiscError() }
-        self.image = image
+        self.ptr = image
         
         try addPlane(heif_channel_Y, bitmap: Y)
         
@@ -68,7 +76,7 @@ public class HEIFImage {
         if error.exists { throw error }
         
         guard let image = result else { throw MiscError() }
-        self.image = image
+        self.ptr = image
         
         try addPlane(heif_channel_Y, bitmap: Y)
         try addPlane(heif_channel_Cb, bitmap: Cb)
@@ -86,7 +94,7 @@ public class HEIFImage {
     func addPlane(_ channel: heif_channel,
                   bitmap: Bitmap<Mono<UInt8>>) throws {
         let size = bitmap.size
-        let error = heif_image_add_plane(image,
+        let error = heif_image_add_plane(ptr,
                                          channel,
                                          Int32(size.width),
                                          Int32(size.height),
@@ -94,7 +102,7 @@ public class HEIFImage {
         if error.exists { throw error }
         
         var ts_: Int32 = 0
-        var target: UnsafeMutablePointer<UInt8> = heif_image_get_plane(image, channel, &ts_)
+        var target: UnsafeMutablePointer<UInt8> = heif_image_get_plane(ptr, channel, &ts_)
         let ts: Int = Int(ts_)
         
         let ss: Int = bitmap.stride
@@ -107,6 +115,12 @@ public class HEIFImage {
             source = source.advanced(by: ss)
             target = target.advanced(by: ts)
         }
+    }
+    
+    func bitmap(for plane: Int32) -> Void {
+//        let chroma =
+        
+    
     }
     
     func setProfile(_ profile: ColorProfile) throws {
@@ -127,7 +141,7 @@ public class HEIFImage {
         //
         //        let type = OpaquePointer(&heif_color_profile_type_rICC)
         
-        let error = heif_image_set_raw_color_profile(image,
+        let error = heif_image_set_raw_color_profile(ptr,
                                                      "prof",
                                                      profile.pointer,
                                                      profile.length)
@@ -150,19 +164,26 @@ public class HEIFImage {
     //        block(Y!, Cb!, Cr!, Int(sY), Int(sCb), Int(sCr))
     //    }
     
+    public var image: Image {
+        let chroma = heif_image_get_chroma_format(ptr)
+        print(chroma)
+
+        fatalError()
+    }
+    
 }
 
 
 extension HEIFImage {
     
-    public func encode(context: HEIFContext, encoder: HEIFEncoder) throws -> heif_image_handler_ptr {
+    public func encode(context: HEIFContext, encoder: HEIFEncoder) throws -> heif_image_handle_ptr {
         
         print("image: \(self)")
-        print("   size: \(heif_image_get_width(image, heif_channel_Y))x\(heif_image_get_height(image, heif_channel_Y))")
+        print("   size: \(heif_image_get_width(ptr, heif_channel_Y))x\(heif_image_get_height(ptr, heif_channel_Y))")
         
         var result: OpaquePointer?
         let error = heif_context_encode_image(context.context,
-                                              self.image,
+                                              self.ptr,
                                               encoder.encoder,
                                               nil,
                                               &result)
