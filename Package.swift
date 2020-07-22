@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     
-    name: "imagebase",
+    name: "ImageBase",
     
     products: [
         .library(name: "ImageBase", targets: ["ImageBase"]),
