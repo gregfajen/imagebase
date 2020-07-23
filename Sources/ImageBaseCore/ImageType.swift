@@ -35,8 +35,9 @@ public extension Data {
             case 0x89: return .png
             case 0xff: return .jpeg
             case 0x47: return .gif
-            case 0x00: return .mp4
-            case 102: return .heif
+//            case 0x00: return .mp4
+//            case 102: return .heif
+            case 0x00: return .heif
             case 0x52: return .webp
             default:
                 let hex = String.init(byte, radix: 16, uppercase: true)

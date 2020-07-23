@@ -165,9 +165,31 @@ public class HEIFImage {
     //    }
     
     public var image: Image {
-        let chroma = heif_image_get_chroma_format(ptr)
-        print(chroma)
-
+        switch heif_image_get_chroma_format(ptr) {
+            case heif_chroma_interleaved_RGB: return rgbImage
+            case heif_chroma_interleaved_RGBA: return rgbaImage
+            default: fatalError()
+        }
+    }
+    
+    private var rgbImage: Image {
+        let width = heif_image_get_width(ptr, heif_channel_interleaved)
+        let height = heif_image_get_height(ptr, heif_channel_interleaved)
+        let size = Size(width, height)
+        
+        let bitmap = Bitmap<RGB<UInt8>>(size)
+        
+        var stride: Int32 = 0
+        let data = heif_image_get_plane(ptr, heif_channel_interleaved, &stride)
+        
+        bitmap.copy(from: .init(start: data,
+                                count: Int(height * stride)),
+                    stride: Int(stride))
+        
+        return Image(bitmap)
+    }
+    
+    private var rgbaImage: Image {
         fatalError()
     }
     

@@ -238,6 +238,19 @@ public class Bitmap<P: Pixel> {
         return target
     }
     
+    public func copy(from data: UnsafeBufferPointer<UInt8>, stride: Int) {
+        for y in 0..<size.height {
+            let start = y * stride
+            let end = start + stride
+            let slice = data[start..<end]
+            let source = UnsafeBufferPointer<UInt8>(rebasing: slice)
+            
+            let target = row(y)
+            
+            memcpy(target, source.baseAddress, min(stride, self.stride))
+        }
+    }
+
 }
 
 extension Bitmap where P == RGBA<UInt8> {

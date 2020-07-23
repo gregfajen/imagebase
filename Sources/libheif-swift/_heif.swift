@@ -32,7 +32,12 @@ func heif_read(data: Data) throws -> HEIFImage {
     heif_context_get_primary_image_handle(context.context, &handle);
     
     var image: OpaquePointer?
-    heif_decode_image(handle, &image, heif_colorspace_RGB, heif_chroma_interleaved_RGB, nil)
+    
+    if heif_image_handle_has_alpha_channel(handle) == 0 {
+        heif_decode_image(handle, &image, heif_colorspace_RGB, heif_chroma_interleaved_RGB, nil)
+    } else {
+        heif_decode_image(handle, &image, heif_colorspace_RGB, heif_chroma_interleaved_RGBA, nil)
+    }
     
     return HEIFImage(image!)
 }
