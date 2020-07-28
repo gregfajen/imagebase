@@ -9,7 +9,7 @@ import Foundation
 
 public protocol ImageEncoder {
     
-    static func encode(image: Image) throws -> Data
+    static func encode(image: Image, quality: Int) throws -> Data
     
 }
 

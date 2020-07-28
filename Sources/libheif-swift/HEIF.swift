@@ -32,14 +32,14 @@ public struct HEIF: ImageEncoder, DataBasedDecoder {
         }
     }
     
-    public static func encode(image: Image) throws -> Data {
+    public static func encode(image: Image, quality: Int) throws -> Data {
         let backing = try image.backing.asYCbCr().as420()
         let image = try self.image(for: backing, image.profile)
         
         //        let image = try HEIFImage(Y: y, Cb: cb, Cr: cr, image.profile)
         
         
-        let data = try heif_write(image: image)
+        let data = try heif_write(image: image, quality: quality)
         return data
     }
     

@@ -206,7 +206,7 @@ public struct PNG: FileBasedDecoder, ImageEncoder {
         return data
     }
     
-    public static func encode(image: Image) throws -> Data {
+    public static func encode(image: Image, quality: Int) throws -> Data {
         switch image.backing {
             case .G(let bitmap): return try encode(bitmap)
             case .GA(let bitmap): return try encode(bitmap)

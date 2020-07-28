@@ -22,7 +22,7 @@ print("HI!")
 var filename = "/Users/greg/Desktop/ness.png"
 let image = try! PNG.decode(path: filename)
 
-let data = try! WEBP.encode(image: image)
+let data = try! WEBP.encode(image: image, quality: 65)
 filename = "/Users/greg/Desktop/ness.webp"
 try! data.write(to: URL(fileURLWithPath: filename))
 

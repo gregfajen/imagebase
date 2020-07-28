@@ -53,7 +53,7 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
     static let TRUE: boolean = .init(1)
     static let FALSE: boolean = .init(0)
     
-    static func encode<P>(_ bitmap: Bitmap<P>) throws -> Data {
+    static func encode<P>(_ bitmap: Bitmap<P>, quality: Int) throws -> Data {
         var info: jpeg_compress_struct = .init()
         var err: jpeg_error_mgr = .init()
         
@@ -71,7 +71,7 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
         info.in_color_space = P.pixelType.jSpace
             
         jpeg_set_defaults(&info)
-        jpeg_set_quality(&info, 50, FALSE)
+        jpeg_set_quality(&info, Int32(quality), FALSE)
         
         jpeg_start_compress(&info, TRUE)
         
@@ -90,10 +90,10 @@ public struct JPEG: DataBasedDecoder, ImageEncoder {
         return data
     }
     
-    public static func encode(image: Image) throws -> Data {
+    public static func encode(image: Image, quality: Int) throws -> Data {
         switch image.removingAlpha().backing {
-            case .G(let bitmap): return try encode(bitmap)
-            case .RGB(let bitmap): return try encode(bitmap)
+            case .G(let bitmap): return try encode(bitmap, quality: quality)
+            case .RGB(let bitmap): return try encode(bitmap, quality: quality)
             case .GA, .RGBA, .YCbCr, .YCbCrA: throw MiscError()
         }
     }

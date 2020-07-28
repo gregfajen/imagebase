@@ -42,12 +42,12 @@ func heif_read(data: Data) throws -> HEIFImage {
     return HEIFImage(image!)
 }
 
-func heif_write(image: HEIFImage) throws -> Data {
+func heif_write(image: HEIFImage, quality: Int) throws -> Data {
     
     
     let context = HEIFContext()
     let encoder = try HEIFEncoder()
-    encoder.lossyQuality = 30
+    encoder.lossyQuality = quality
     
     _ = try image.encode(context: context, encoder: encoder)
     

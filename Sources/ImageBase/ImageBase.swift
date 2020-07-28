@@ -26,12 +26,12 @@ public extension MimeType {
         }
     }
     
-    func encode(image: Image) throws -> Data {
+    func encode(image: Image, quality: Int = 65) throws -> Data {
         switch self {
-            case .png: return try PNG.encode(image: image)
-            case .heif: return try HEIF.encode(image: image)
-            case .jpeg: return try JPEG.encode(image: image)
-            case .webp: return try WEBP.encode(image: image)
+            case .png: return try PNG.encode(image: image, quality: quality)
+            case .heif: return try HEIF.encode(image: image, quality: quality)
+            case .jpeg: return try JPEG.encode(image: image, quality: quality)
+            case .webp: return try WEBP.encode(image: image, quality: quality)
             default: throw MiscError()
         }
     }

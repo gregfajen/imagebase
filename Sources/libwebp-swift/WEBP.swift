@@ -11,9 +11,7 @@ import libwebp
 
 public struct WEBP: ImageEncoder {
     
-    static var quality: Float { return 60 }
-    
-    public static func encodeRGB(_ bitmap: Bitmap<RGB<UInt8>>) throws -> Data {
+    public static func encodeRGB(_ bitmap: Bitmap<RGB<UInt8>>, quality: Int) throws -> Data {
         var output = UnsafeMutablePointer<UInt8>(bitPattern: 0)
         
         let inputO = OpaquePointer(bitmap.data)
@@ -23,7 +21,7 @@ public struct WEBP: ImageEncoder {
                                  Int32(bitmap.size.width),
                                  Int32(bitmap.size.height),
                                  Int32(bitmap.stride),
-                                 quality,
+                                 Float(quality),
                                  &output)
         
         defer { WebPFree(output) }
@@ -35,7 +33,7 @@ public struct WEBP: ImageEncoder {
         }
     }
     
-    public static func encodeRGBA(_ bitmap: Bitmap<RGBA<UInt8>>) throws -> Data {
+    public static func encodeRGBA(_ bitmap: Bitmap<RGBA<UInt8>>, quality: Int) throws -> Data {
         var output = UnsafeMutablePointer<UInt8>(bitPattern: 0)
         
         let inputO = OpaquePointer(bitmap.data)
@@ -45,7 +43,7 @@ public struct WEBP: ImageEncoder {
                                   Int32(bitmap.size.width),
                                   Int32(bitmap.size.height),
                                   Int32(bitmap.stride),
-                                  quality,
+                                  Float(quality),
                                   &output)
         
         defer { WebPFree(output) }
@@ -57,10 +55,10 @@ public struct WEBP: ImageEncoder {
         }
     }
     
-    public static func encode(image: Image) throws -> Data {
+    public static func encode(image: Image, quality: Int) throws -> Data {
         switch image.addingColor().backing {
-            case .RGB(let bitmap): return try encodeRGB(bitmap)
-            case .RGBA(let bitmap): return try encodeRGBA(bitmap)
+            case .RGB(let bitmap): return try encodeRGB(bitmap, quality: quality)
+            case .RGBA(let bitmap): return try encodeRGBA(bitmap, quality: quality)
             case .G, .GA, .YCbCr, .YCbCrA: throw MiscError()
         }
     }
