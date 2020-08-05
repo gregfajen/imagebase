@@ -247,7 +247,7 @@ public class Bitmap<P: Pixel> {
             
             let target = row(y)
             
-            memcpy(target, source.baseAddress, min(stride, self.stride))
+            memcpy(target, source.baseAddress!, min(stride, self.stride))
         }
     }
 
