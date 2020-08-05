@@ -46,6 +46,30 @@ public extension DataBasedDecoder {
     
 }
 
+public protocol PathBasedDecoder: ImageDecoder {
+    
+}
+
+public extension PathBasedDecoder {
+    
+    static func decode(data: Data) throws -> Image {
+        let path = "/tmp/\(UUID().uuidString)"
+        try data.write(to: URL(fileURLWithPath: path))
+        
+        let image = try decode(path: path)
+        
+        try? FileManager.default.removeItem(atPath: path)
+        
+        return image
+    }
+    
+    static func decode(fp: UnsafeMutablePointer<FILE>) throws -> Image {
+        let data = Data(fp: fp)
+        return try decode(data: data)
+    }
+    
+}
+
 public protocol FileBasedDecoder: ImageDecoder {
     
 }

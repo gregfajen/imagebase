@@ -46,10 +46,18 @@ let package = Package(
                        providers: [.apt(["libwebp-dev"]), .brew(["webp"])]),
         .target(name: "libwebp-swift",
                 dependencies: ["libwebp", "ImageBaseCore"]),
+        
+        
+        // giflib
+        .systemLibrary(name: "giflib",
+                       pkgConfig: "giflib",
+                       providers: [.apt(["libgif-dev"]), .brew(["giflib"])]),
+        .target(name: "giflib-swift",
+                dependencies: ["giflib", "ImageBaseCore"]),
 
         // umbrella
         .target(name: "ImageBase",
-                dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift", "libwebp-swift"]),
+                dependencies: ["libjpeg-swift", "libpng-swift", "libheif-swift", "libwebp-swift", "giflib-swift"]),
         .target(name: "RunAndPlay",
                 dependencies: ["ImageBase"])
         

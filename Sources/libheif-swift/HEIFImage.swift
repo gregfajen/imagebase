@@ -118,9 +118,9 @@ public class HEIFImage {
     }
     
     func bitmap(for plane: Int32) -> Void {
-//        let chroma =
+        //        let chroma =
         
-    
+        
     }
     
     func setProfile(_ profile: ColorProfile) throws {
@@ -190,7 +190,20 @@ public class HEIFImage {
     }
     
     private var rgbaImage: Image {
-        fatalError()
+        let width = heif_image_get_width(ptr, heif_channel_interleaved)
+        let height = heif_image_get_height(ptr, heif_channel_interleaved)
+        let size = Size(width, height)
+        
+        let bitmap = Bitmap<RGBA<UInt8>>(size)
+        
+        var stride: Int32 = 0
+        let data = heif_image_get_plane(ptr, heif_channel_interleaved, &stride)
+        
+        bitmap.copy(from: .init(start: data,
+                                count: Int(height * stride)),
+                    stride: Int(stride))
+        
+        return Image(bitmap)
     }
     
 }

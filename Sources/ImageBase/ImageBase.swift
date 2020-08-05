@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Greg Fajen on 11/16/19.
 //
@@ -32,6 +32,16 @@ public extension MimeType {
             case .heif: return try HEIF.encode(image: image, quality: quality)
             case .jpeg: return try JPEG.encode(image: image, quality: quality)
             case .webp: return try WEBP.encode(image: image, quality: quality)
+            default: throw MiscError()
+        }
+    }
+    
+    func decode(data: Data) throws -> Image {
+        switch self {
+            case .png: return try PNG.decode(data: data)
+            case .heif: return try HEIF.decode(data: data)
+            case .jpeg: return try JPEG.decode(data: data)
+            //            case .webp: return try WEBP.decode(data: data)
             default: throw MiscError()
         }
     }

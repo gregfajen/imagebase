@@ -14,17 +14,23 @@ import libheif_swift
 import libjpeg_swift
 import libwebp_swift
 
+import giflib_swift
+
 import ImageBaseCore
 import ImageBase
 
-print("HI!")
+//print("HI!")
+//
+//var filename = "/Users/greg/Desktop/mojave.gif"
+var filename = "/Users/greg/Desktop/giphy-2.gif"
+let image = try! GIF.decode(path: filename)
 
-var filename = "/Users/greg/Desktop/ness.png"
-let image = try! PNG.decode(path: filename)
 
-let data = try! WEBP.encode(image: image, quality: 65)
-filename = "/Users/greg/Desktop/ness.webp"
-try! data.write(to: URL(fileURLWithPath: filename))
+//let image = try! PNG.decode(path: filename)
+//
+//let data = try! WEBP.encode(image: image, quality: 65)
+//filename = "/Users/greg/Desktop/ness.webp"
+//try! data.write(to: URL(fileURLWithPath: filename))
 
 
 //do {
