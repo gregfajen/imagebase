@@ -1,6 +1,6 @@
 
 module libheif [system] {
     header "libheif.h"
-    link "libheif"
+    link "heif"
     export *
 }

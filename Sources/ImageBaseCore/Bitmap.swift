@@ -78,10 +78,10 @@ public class Bitmap<P: Pixel> {
     
     // I don't like this function because I think it does a lot of branching
     // in what's intended to be a tight loop
-    @_specialize(exported: true, where P == Mono<UInt8>)
-    @_specialize(exported: true, where P == MonoAlpha<UInt8>)
-    @_specialize(exported: true, where P == RGB<UInt8>)
-    @_specialize(exported: true, where P == RGBA<UInt8>)
+    @_specialize(where P == Mono<UInt8>)
+    @_specialize(where P == MonoAlpha<UInt8>)
+    @_specialize(where P == RGB<UInt8>)
+    @_specialize(where P == RGBA<UInt8>)
     func linearInterpolate(_ x: Float, _ y: Float) -> P {
         let width = size.width
         let height = size.height
@@ -118,10 +118,10 @@ public class Bitmap<P: Pixel> {
         //        return P(v2)
     }
     
-    @_specialize(exported: true, where P == Mono<UInt8>)
-    @_specialize(exported: true, where P == MonoAlpha<UInt8>)
-    @_specialize(exported: true, where P == RGB<UInt8>)
-    @_specialize(exported: true, where P == RGBA<UInt8>)
+    @_specialize(where P == Mono<UInt8>)
+    @_specialize(where P == MonoAlpha<UInt8>)
+    @_specialize(where P == RGB<UInt8>)
+    @_specialize(where P == RGBA<UInt8>)
     func halved() throws -> Bitmap<P> {
         let half = Size(size.width/2, size.height/2)
         guard half * 2 == size else { throw MiscError(/*"size not even"*/) }
@@ -146,10 +146,10 @@ public class Bitmap<P: Pixel> {
         return target
     }
     
-    @_specialize(exported: true, where P == Mono<UInt8>)
-    @_specialize(exported: true, where P == MonoAlpha<UInt8>)
-    @_specialize(exported: true, where P == RGB<UInt8>)
-    @_specialize(exported: true, where P == RGBA<UInt8>)
+    @_specialize(where P == Mono<UInt8>)
+    @_specialize(where P == MonoAlpha<UInt8>)
+    @_specialize(where P == RGB<UInt8>)
+    @_specialize(where P == RGBA<UInt8>)
     func resized(to new: Size) throws -> Bitmap<P> {
         let bitmap = Bitmap<P>(new)
         
@@ -215,10 +215,10 @@ public class Bitmap<P: Pixel> {
         return (qr, rr)
     }
     
-    @_specialize(exported: true, where P == Mono<UInt8>)
-    @_specialize(exported: true, where P == MonoAlpha<UInt8>)
-    @_specialize(exported: true, where P == RGB<UInt8>)
-    @_specialize(exported: true, where P == RGBA<UInt8>)
+    @_specialize(where P == Mono<UInt8>)
+    @_specialize(where P == MonoAlpha<UInt8>)
+    @_specialize(where P == RGB<UInt8>)
+    @_specialize(where P == RGBA<UInt8>)
     public static func from(_ source: Bitmap<P>, _ orientation: ImageOrientation = .up) -> Bitmap<P> {
         if orientation == .up { return source }
         

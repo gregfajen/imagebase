@@ -1,6 +1,6 @@
 
 module libwebp [system] {
     header "libwebp.h"
-    link "libwebp"
+    link "webp"
     export *
 }

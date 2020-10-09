@@ -1,6 +1,6 @@
 
 module giflib [system] {
     header "giflib.h"
-    link "giflib"
+    link "gif"
     export *
 }
