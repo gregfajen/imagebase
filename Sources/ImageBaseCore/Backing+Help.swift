@@ -11,8 +11,8 @@ extension ImageBacking {
     
     init<P: Pixel>(_ bitmap: Bitmap<P>) {
         switch P.pixelType {
-            case .y: fatalError()
-            case .ya: fatalError()
+            case .y: self = .G(bitmap as! Bitmap<Mono<U>>)
+            case .ya: self = .GA(bitmap as! Bitmap<MonoAlpha<U>>)
             case .rgb: self = .RGB(bitmap as! Bitmap<RGB<U>>)
             case .rgba: self = .RGBA(bitmap as! Bitmap<RGBA<U>>)
         }
