@@ -12,6 +12,7 @@ import Foundation
 @_exported import libheif_swift
 @_exported import libjpeg_swift
 @_exported import libwebp_swift
+@_exported import giflib_swift
 
 public extension MimeType {
     
@@ -41,7 +42,8 @@ public extension MimeType {
             case .png: return try PNG.decode(data: data)
             case .heif: return try HEIF.decode(data: data)
             case .jpeg: return try JPEG.decode(data: data)
-            //            case .webp: return try WEBP.decode(data: data)
+            case .webp: return try WEBP.decode(data: data)
+//            case .gif: return try GIF.decode(data: data)
             default: throw MiscError()
         }
     }

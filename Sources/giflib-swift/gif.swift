@@ -18,16 +18,34 @@ public struct GIF: PathBasedDecoder {
             throw MiscError()
         }
         
-        DGifSlurp(file)
+        guard DGifSlurp(file) == GIF_OK else {
+            throw MiscError()
+        }
+        
         if file?.pointee.Error != D_GIF_SUCCEEDED {
             throw MiscError()
         }
         
-        let width = file!.pointee.SWidth
-        let height = file!.pointee.SHeight
-        let count = file!.pointee.ImageCount
+        guard let filetype = file?.pointee else {
+            throw MiscError()
+        }
+        
+        
+        
+        
+        let width = filetype.SWidth
+        let height = filetype.SHeight
+        let count = filetype.ImageCount
+        
         print("Size: \(width) x \(height)")
         print("Count: \(count)")
+        
+        let first = filetype.SavedImages.pointee /*else {
+            throw MiscError()
+        }*/
+        
+        
+//        first
         
         fatalError()
     }

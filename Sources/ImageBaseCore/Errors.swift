@@ -9,8 +9,10 @@ import Foundation
 
 public struct MiscError: Error {
     
-    public init() {
-        print("oops")
+    let message: String
+    
+    public init(_ message: String = "unknown error") {
+        self.message = message
     }
     
 }

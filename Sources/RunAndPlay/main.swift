@@ -22,8 +22,13 @@ import ImageBase
 //print("HI!")
 //
 //var filename = "/Users/greg/Desktop/mojave.gif"
-var filename = "/Users/greg/Desktop/giphy-2.gif"
-let image = try! GIF.decode(path: filename)
+var filename = "/Users/greg/Desktop/1.webp"
+let image = try! WEBP.decode(path: filename)
+
+let png = try! PNG.encode(image: image, quality: 0)
+
+try! png.write(to: URL(fileURLWithPath: "/Users/greg/Desktop/1.png"))
+
 
 
 //let image = try! PNG.decode(path: filename)
