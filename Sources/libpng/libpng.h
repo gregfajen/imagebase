@@ -31,3 +31,19 @@ png_iCCP_result png_get_iCCP2(png_const_structrp png_ptr,
     return r;
 }
 
+png_color * png_get_palette(png_const_structrp png_ptr,
+                            png_inforp info_ptr,
+                            int32_t *count) {
+    png_colorp palette = 0;
+    png_get_PLTE(png_ptr, info_ptr, &palette, count);
+    return palette;
+}
+
+png_byte * png_get_trans(png_const_structrp png_ptr,
+                         png_inforp info_ptr,
+                         int32_t *count) {
+    png_bytep trans = 0;
+    png_get_tRNS(png_ptr, info_ptr, &trans, count, 0);
+    return trans;
+}
+

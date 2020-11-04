@@ -29,6 +29,8 @@ func hex(_ byte: UInt8) -> String {
 extension ColorProfile {
     
     init?(_ r: png_iCCP_result) {
+        guard let profile = r.profile, r.proflen > 0 else { return nil }
+        
         let data = Data(bytes:     r.profile,
                         count: Int(r.proflen))
         
@@ -62,6 +64,39 @@ public struct PNG: FileBasedDecoder, ImageEncoder {
         let prof = png_get_iCCP2(png, info)
         
         let image = Image(bitmap.as8Bit())
+        image.profile = ColorProfile(prof)
+        
+        return image
+    }
+    
+    private static func decodePalette<P: Pixel>(_ p: P.Type,
+                                                _ size: Size,
+                                                _ png: png_structp,
+                                                _ info: png_infop) -> Image {
+        let indexed = Bitmap<Mono<UInt8>>(size)
+        png_read_image(png, indexed.rows)
+        
+        var paletteCount: Int32 = 0
+        var palette = png_get_palette(png, info, &paletteCount).buffer(Int(paletteCount))
+        
+        var transCount: Int32 = 0
+        var trans = png_get_trans(png, info, &transCount).buffer(Int(transCount))
+        
+        let bitmap = indexed.map { index -> RGBA<UInt8> in
+            let color = palette[Int(index.v)]
+            let alpha: UInt8
+            if index.v < transCount {
+                alpha = trans[Int(index.v)]
+            } else {
+                alpha = 255
+            }
+            
+            return RGBA<UInt8>(color.red, color.green, color.blue, alpha)
+        }
+        
+        let prof = png_get_iCCP2(png, info)
+        
+        let image = Image(bitmap)
         image.profile = ColorProfile(prof)
         
         return image
@@ -108,6 +143,13 @@ public struct PNG: FileBasedDecoder, ImageEncoder {
                     return decode(RGBA<UInt16>.self, size, png, info)
                 } else {
                     return decode(RGBA<UInt8>.self, size, png, info)
+                }
+                
+            case PNG_COLOR_TYPE_PALETTE:
+                if is16 {
+                    return decodePalette(RGBA<UInt16>.self, size, png, info)
+                } else {
+                    return decodePalette(RGBA<UInt8>.self, size, png, info)
                 }
             
             default: fatalError()
@@ -242,3 +284,10 @@ func hi(filename: String) throws {
     //    png_create
 }
 
+extension UnsafeMutablePointer {
+    
+    func buffer(_ count: Int) -> UnsafeMutableBufferPointer<Pointee> {
+        return UnsafeMutableBufferPointer(start: self, count: count)
+    }
+    
+}

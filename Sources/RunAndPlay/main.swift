@@ -22,12 +22,12 @@ import ImageBase
 //print("HI!")
 //
 //var filename = "/Users/greg/Desktop/mojave.gif"
-var filename = "/Users/greg/Desktop/1.webp"
-let image = try! WEBP.decode(path: filename)
+var filename = "/Users/greg/Desktop/kim.png"
+let image = try! PNG.decode(path: filename)
 
-let png = try! PNG.encode(image: image, quality: 0)
+let heic = try! HEIF.encode(image: image, quality: 65)
 
-try! png.write(to: URL(fileURLWithPath: "/Users/greg/Desktop/1.png"))
+try! heic.write(to: URL(fileURLWithPath: "/Users/greg/Desktop/kim.heic"))
 
 
 
